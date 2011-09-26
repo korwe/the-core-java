@@ -1,0 +1,1 @@
+message=<coreMessage><sessionId>ngtestsession01</sessionId><messageType>ServiceRequest</messageType><guid>NGNGNGNG-0001-4299-B561-428E36ECD722</guid><choreography>PingService</choreography><description>Test%20PingService</description><timeStamp>20110515T204539.082</timeStamp><function>ping</function><parameters/></coreMessage>

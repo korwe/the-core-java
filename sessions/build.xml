@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2010.  Korwe Software
+  ~
+  ~  This file is part of TheCore.
+  ~
+  ~  TheCore is free software: you can redistribute it and/or modify it
+  ~  under the terms of the GNU Lesser General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  TheCore is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU Lesser General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU Lesser General Public License
+  ~  along with TheCore.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<project name="sessionmanager" default="build">
+    <property file="../build.properties"/>
+
+    <target name="init">
+        <tstamp />
+        <mkdir dir="build"/>
+    </target>
+
+    <target name="compile" depends="init">
+        <javac srcdir="src"
+               destdir="build"
+               source="1.6"
+               target="1.6"
+               optimize="true"
+               debug="true"
+               deprecation="true"
+               fork="true">
+            <classpath>
+                <fileset dir="../lib">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile">
+        <jar jarfile="thecore-${ant.project.name}-${version}.jar" basedir="build"/>
+    </target>
+
+    <target name="copy" depends="jar">
+        <copy file="thecore-${ant.project.name}-${version}.jar" todir="../lib"/>
+    </target>
+
+    <target name="build" depends="compile, jar, copy"/>
+
+    <target name="clean">
+        <delete dir="build"/> 
+        <delete file="thecore-${ant.project.name}-${version}.jar"/>
+        <delete file="../lib/thecore-${ant.project.name}-${version}.jar"/>
+    </target>
+</project>

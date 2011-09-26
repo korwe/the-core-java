@@ -1,1 +1,0 @@
-message=<coreMessage><sessionId>ngtestsession01</sessionId><messageType>InitiateSessionRequest</messageType><guid>686934C2-0000-451B-B9BE-DEAB029EC815</guid><choreography/><description/><timeStamp>20110515T201824.047</timeStamp></coreMessage>

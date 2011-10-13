@@ -41,7 +41,7 @@
                 <include name="commons-logging.proprties"/>
                 <include name="log4j.properties"/>
                 <include name="thecore-services.sh"/>
-                <include name="lib/*.jar"/>
+                <include name="${lib.dir}/*.jar"/>
             </zipfileset>
         </zip>
     </target>

@@ -21,9 +21,7 @@ package com.korwe.thecore.api;
 
 import org.apache.log4j.Logger;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.Properties;
 
 /**
@@ -33,27 +31,36 @@ public class CoreConfig {
 
     private static final Logger LOG = Logger.getLogger(CoreConfig.class);
 
-    private static Properties prop = new Properties();
+    private static CoreConfig config;
 
-    static {
-        FileInputStream fileInputStream;
+    private Properties prop = new Properties();
+
+    public static void initialize(InputStream configFile) {
+        config = new CoreConfig(configFile);
+    }
+
+    private CoreConfig(InputStream configFile) {
         try {
-            File configFile = new File("coreconfig.xml");
-            LOG.info("configFile.getAbsolutePath() = " + configFile.getAbsolutePath());
-            fileInputStream = new FileInputStream(configFile);
-            prop.loadFromXML(fileInputStream);
+            prop.loadFromXML(configFile);
         }
         catch (Exception e) {
-            createDefaultSettingsFile();
-            LOG.error("Config file not found, created default corefonfig.xml. Please edit and rerun.");
+            createDefaultSettings();
+            LOG.error("Config file not found, using defaults", e);
         }
     }
 
-    public static String getSetting(String settingName) {
+    public static CoreConfig getConfig() {
+        if (null == config) {
+            throw new RuntimeException("Core configuration not initialized");
+        }
+        return config;
+    }
+
+    public String getSetting(String settingName) {
         return prop.getProperty(settingName);
     }
 
-    public static int getIntSetting(String settingName) {
+    public int getIntSetting(String settingName) {
         String setting = getSetting(settingName);
         try {
             return Integer.parseInt(setting);
@@ -64,7 +71,7 @@ public class CoreConfig {
         }
     }
 
-    public static void createDefaultSettingsFile() {
+    private Properties createDefaultSettings() {
         Properties prop = new Properties();
         prop.setProperty("amqp_server", "localhost");
         prop.setProperty("amqp_port", "5672");
@@ -75,13 +82,6 @@ public class CoreConfig {
         prop.setProperty("processor_type", "com.korwe.thecore.session.BasicMessageProcessor");
         prop.setProperty("timeout_seconds", "1800");
         prop.setProperty("scxml_path", "core_session.scxml");
-        try {
-            FileOutputStream fileOutputStream = new FileOutputStream("coreconfig.xml");
-            prop.storeToXML(fileOutputStream, "TheCore config file");
-            fileOutputStream.close();
-        }
-        catch (Exception e) {
-            LOG.error("Could not create coreconfig file", e);
-        }
+        return prop;
     }
 }

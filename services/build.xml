@@ -18,7 +18,7 @@
   ~  along with TheCore.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<project name="webcore" default="build">
+<project name="services" default="build">
     <property file="../build.properties"/>
 
     <target name="init">

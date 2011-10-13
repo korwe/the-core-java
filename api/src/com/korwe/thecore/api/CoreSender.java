@@ -40,12 +40,13 @@ public class CoreSender {
     public CoreSender(MessageQueue queue) {
         this.queue = queue;
         connection = new Connection();
+        CoreConfig config = CoreConfig.getConfig();
         if (LOG.isInfoEnabled()) {
-            LOG.info("Connecting to queue server " + CoreConfig.getSetting("amqp_server"));
+            LOG.info("Connecting to queue server " + config.getSetting("amqp_server"));
         }
-        connection.connect(CoreConfig.getSetting("amqp_server"), CoreConfig.getIntSetting("amqp_port"),
-                           CoreConfig.getSetting("amqp_vhost"), CoreConfig.getSetting("amqp_user"),
-                           CoreConfig.getSetting("amqp_password"));
+        connection.connect(config.getSetting("amqp_server"), config.getIntSetting("amqp_port"),
+                           config.getSetting("amqp_vhost"), config.getSetting("amqp_user"),
+                           config.getSetting("amqp_password"));
         session = connection.createSession();
         if (LOG.isInfoEnabled()) {
             LOG.info("Connected");

@@ -54,7 +54,7 @@ public class ScxmlMessageProcessor extends BasicMessageProcessor implements Core
     public void initialize(String sessionId) {
         super.initialize(sessionId);
         try {
-            String scxmlPath = CoreConfig.getSetting("scxml_path");
+            String scxmlPath = CoreConfig.getConfig().getSetting("scxml_path");
             if (LOG.isDebugEnabled()) {
                 LOG.debug("SCXML path = " + scxmlPath);
             }

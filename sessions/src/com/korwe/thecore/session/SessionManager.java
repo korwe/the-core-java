@@ -46,7 +46,7 @@ public class SessionManager extends AbstractExecutionThreadService implements Co
     }
 
     public SessionManager() {
-        subscriber = new CoreSubscriber(MessageQueue.CoreToSession, CoreConfig.getSetting("session_message_filter"));
+        subscriber = new CoreSubscriber(MessageQueue.CoreToSession, CoreConfig.getConfig().getSetting("session_message_filter"));
         clientSender = new CoreSender(MessageQueue.CoreToClient);
     }
 
@@ -125,7 +125,7 @@ public class SessionManager extends AbstractExecutionThreadService implements Co
         }
         else {
             CoreMessageProcessor processor = createProcessor(sessionId);
-            CoreSession session = new CoreSession(sessionId, processor, CoreConfig.getIntSetting("timeout_seconds"));
+            CoreSession session = new CoreSession(sessionId, processor, CoreConfig.getConfig().getIntSetting("timeout_seconds"));
             sessions.put(sessionId, session);
             response = new InitiateSessionResponse(sessionId, message.getGuid(), true);
         }

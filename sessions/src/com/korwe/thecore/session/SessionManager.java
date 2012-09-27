@@ -40,12 +40,14 @@ public class SessionManager extends AbstractExecutionThreadService implements Co
 
     private final CoreSubscriber subscriber;
     private final CoreSender clientSender;
+    private final String processorType;
 
     public static CoreSession getSession(String sessionId) {
         return sessions.get(sessionId);
     }
 
     public SessionManager() {
+        processorType = CoreConfig.getConfig().getSetting("processor_type");
         subscriber = new CoreSubscriber(MessageQueue.CoreToSession, CoreConfig.getConfig().getSetting("session_message_filter"));
         clientSender = new CoreSender(MessageQueue.CoreToClient);
     }
@@ -133,11 +135,11 @@ public class SessionManager extends AbstractExecutionThreadService implements Co
     }
 
     private CoreMessageProcessor createProcessor(String sessionId) {
-        if (null == sessionId || sessionId.isEmpty()) {
+        if (processorType == null || sessionId == null || processorType.isEmpty() || sessionId.isEmpty()) {
             return null;
         }
         try {
-            CoreMessageProcessor processor = new ScxmlMessageProcessor();
+            CoreMessageProcessor processor = (CoreMessageProcessor) Class.forName(processorType).newInstance();
             processor.initialize(sessionId);
             return processor;
         }

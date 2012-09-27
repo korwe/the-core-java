@@ -33,8 +33,6 @@ import org.junit.Test;
  */
 public class ScxmlMessageProcessorTest {
 
-    Object[] o = new Object[1];
-
     @Test
     public void testInitialize() throws Exception {
         try {

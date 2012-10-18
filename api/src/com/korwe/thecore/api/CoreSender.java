@@ -35,7 +35,6 @@ public class CoreSender {
     private final MessageQueue queue;
     private Connection connection;
     private CoreMessageSerializer serializer;
-    private Session session;
 
     public CoreSender(MessageQueue queue) {
         this.queue = queue;
@@ -47,7 +46,6 @@ public class CoreSender {
         connection.connect(config.getSetting("amqp_server"), config.getIntSetting("amqp_port"),
                            config.getSetting("amqp_vhost"), config.getSetting("amqp_user"),
                            config.getSetting("amqp_password"));
-        session = connection.createSession();
         if (LOG.isInfoEnabled()) {
             LOG.info("Connected");
         }
@@ -55,7 +53,6 @@ public class CoreSender {
     }
 
     public void close() {
-        session.close();
         connection.close();
     }
 
@@ -94,13 +91,14 @@ public class CoreSender {
         String serialized = serializer.serialize(message);
         DeliveryProperties props = new DeliveryProperties();
         props.setRoutingKey(routing);
+        Session session = connection.createSession();
         session.messageTransfer(destination, MessageAcceptMode.EXPLICIT, MessageAcquireMode.PRE_ACQUIRED,
                                 new Header(props), serialized);
         session.sync();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sent: " + serialized);
         }
-
+        session.close();
     }
 
     public MessageQueue getQueue() {

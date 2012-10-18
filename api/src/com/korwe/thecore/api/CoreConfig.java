@@ -82,6 +82,7 @@ public class CoreConfig {
         prop.setProperty("processor_type", "com.korwe.thecore.session.BasicMessageProcessor");
         prop.setProperty("timeout_seconds", "1800");
         prop.setProperty("scxml_path", "core_session.scxml");
+        prop.setProperty("max_threads", "16");
         return prop;
     }
 }

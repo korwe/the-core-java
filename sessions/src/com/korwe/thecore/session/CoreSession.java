@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
@@ -43,7 +44,7 @@ public class CoreSession implements CoreMessageHandler {
     private static final long MILLIS_PER_SEC = 1000L;
     private CoreSender serviceSender = new CoreSender(MessageQueue.CoreToService);
     private CoreSender clientSender = new CoreSender(MessageQueue.CoreToClient);
-    private Map<String, CoreMessage> cache = new HashMap<String, CoreMessage>(1);
+    private Map<String, CoreMessage> cache = new ConcurrentHashMap<String, CoreMessage>(64);
 
     public String getSessionId() {
         return sessionId;

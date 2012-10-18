@@ -22,12 +22,13 @@ package com.korwe.thecore.session;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
 import com.korwe.thecore.api.*;
 import com.korwe.thecore.messages.*;
-import com.korwe.thecore.scxml.ScxmlMessageProcessor;
 import org.apache.log4j.Logger;
 
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
@@ -41,6 +42,8 @@ public class SessionManager extends AbstractExecutionThreadService implements Co
     private final CoreSubscriber subscriber;
     private final CoreSender clientSender;
     private final String processorType;
+    private ExecutorService executorService;
+    private int maxThreads;
 
     public static CoreSession getSession(String sessionId) {
         return sessions.get(sessionId);
@@ -50,10 +53,12 @@ public class SessionManager extends AbstractExecutionThreadService implements Co
         processorType = CoreConfig.getConfig().getSetting("processor_type");
         subscriber = new CoreSubscriber(MessageQueue.CoreToSession, CoreConfig.getConfig().getSetting("session_message_filter"));
         clientSender = new CoreSender(MessageQueue.CoreToClient);
+        maxThreads = CoreConfig.getConfig().getIntSetting("max_threads");
     }
 
     @Override
     protected void startUp() {
+        executorService = Executors.newFixedThreadPool(maxThreads);
         subscriber.connect(this);
     }
 
@@ -63,28 +68,35 @@ public class SessionManager extends AbstractExecutionThreadService implements Co
         }
         subscriber.close();
         clientSender.close();
+        executorService.shutdown();
     }
 
     @Override
-    public void handleMessage(CoreMessage message) {
-        if (message != null) {
-            String sessionId = message.getSessionId();
-            CoreResponse response;
-            switch (message.getMessageType()) {
-                case InitiateSessionRequest:
-                    response = handleInitiateSession(message, sessionId);
-                    break;
-                case KillSessionRequest:
-                    response = handleKillSession(message, sessionId);
-                    break;
-                default:
-                    response = handleDefault(message, sessionId);
-                    break;
+    public void handleMessage(final CoreMessage message) {
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                if (message != null) {
+                    String sessionId = message.getSessionId();
+                    CoreResponse response;
+                    switch (message.getMessageType()) {
+                        case InitiateSessionRequest:
+                            response = handleInitiateSession(message, sessionId);
+                            break;
+                        case KillSessionRequest:
+                            response = handleKillSession(message, sessionId);
+                            break;
+                        default:
+                            response = handleDefault(message, sessionId);
+                            break;
+                    }
+                    if (response != null) {
+                        clientSender.sendMessage(response, sessionId);
+                    }
+                }
+
             }
-            if (response != null) {
-                clientSender.sendMessage(response, sessionId);
-            }
-        }
+        });
     }
 
     private CoreResponse handleDefault(CoreMessage message, String sessionId) {

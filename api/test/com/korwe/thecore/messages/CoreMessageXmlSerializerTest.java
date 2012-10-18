@@ -41,6 +41,24 @@ public class CoreMessageXmlSerializerTest {
             "</parameter><parameter><name>param3</name><value>value3</value>" +
             "</parameter></parameters></coreMessage>";
 
+    public static final String SERVICE_TS_EXACT =
+            "<coreMessage><sessionId>testSession</sessionId><messageType>ServiceRequest</messageType>" +
+            "<guid>00000000-0000-0000-0000-000000000000</guid><choreography></choreography>" +
+            "<description>Session Id: testSession Type: ServiceRequest</description><timeStamp>20100120T135009</timeStamp>" +
+            "<function>testMe</function><parameters><parameter><name>param1</name><value>value1</value></parameter>" +
+            "<parameter><name>param2</name><value>value2</value>" +
+            "</parameter><parameter><name>param3</name><value>value3</value>" +
+            "</parameter></parameters></coreMessage>";
+
+    public static final String SERVICE_TS_EVIL =
+            "<coreMessage><sessionId>testSession</sessionId><messageType>ServiceRequest</messageType>" +
+            "<guid>00000000-0000-0000-0000-000000000000</guid><choreography></choreography>" +
+            "<description>Session Id: testSession Type: ServiceRequest</description><timeStamp>20100120T135009.12</timeStamp>" +
+            "<function>testMe</function><parameters><parameter><name>param1</name><value>value1</value></parameter>" +
+            "<parameter><name>param2</name><value>value2</value>" +
+            "</parameter><parameter><name>param3</name><value>value3</value>" +
+            "</parameter></parameters></coreMessage>";
+
     @Test
     public void testSerialize() throws Exception {
         CoreMessageSerializer ser = new CoreMessageXmlSerializer();
@@ -55,6 +73,22 @@ public class CoreMessageXmlSerializerTest {
         String expected = SERVICE;
         assertTrue(actual.contains("<guid>00000000-0000-0000-0000-000000000000</guid>"));
         assertTrue(actual.contains("<parameter><name>param1</name><value>value1</value></parameter>"));
+    }
+
+    @Test
+    public void testDeserializeExactTimestamp() throws Exception {
+        CoreMessageSerializer ser = new CoreMessageXmlSerializer();
+        CoreMessage msg = ser.deserialize(SERVICE_TS_EXACT);
+        Assert.assertEquals("ServiceRequest", msg.getMessageType().name());
+        Assert.assertEquals("value1", ((ServiceRequest) msg).getParameterValue("param1"));
+    }
+
+    @Test
+    public void testDeserializeEvilTimestamp() throws Exception {
+        CoreMessageSerializer ser = new CoreMessageXmlSerializer();
+        CoreMessage msg = ser.deserialize(SERVICE_TS_EVIL);
+        Assert.assertEquals("ServiceRequest", msg.getMessageType().name());
+        Assert.assertEquals("value1", ((ServiceRequest) msg).getParameterValue("param1"));
     }
 
     @Test

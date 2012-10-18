@@ -229,12 +229,29 @@ public class CoreMessageXmlSerializer implements CoreMessageSerializer {
             created.setChoreography(getTagValue(doc, "choreography"));
             created.setDescription(getTagValue(doc, "description"));
             String tsValue = getTagValue(doc, "timeStamp");
-            tsValue = tsValue.substring(0, tsValue.indexOf(".") + 3);
+            tsValue = normaliseTimestamp(tsValue);
             DateFormat df = new SimpleDateFormat(TIMESTAMP_FORMAT);
             created.setTimestamp(df.parse(tsValue));
         }
 
         return created;
+    }
+
+    private String normaliseTimestamp(String tsValue) {
+        // Do an evil dance to compensate for timestamps sometimes having 0 or more than 3 fractional second digits
+        int dotPosition = tsValue.indexOf(".");
+        if (dotPosition > 0) {
+            if (dotPosition + 3 >= tsValue.length()) {
+                tsValue = tsValue.substring(0, dotPosition) + ".000";
+            }
+            else {
+                tsValue = tsValue.substring(0, dotPosition + 3);
+            }
+        }
+        else {
+            tsValue = tsValue + ".000";
+        }
+        return tsValue;
     }
 
     private void setResponseFields(CoreResponse response, Document doc) {

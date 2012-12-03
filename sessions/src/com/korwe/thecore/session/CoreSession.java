@@ -26,7 +26,6 @@ import com.korwe.thecore.api.MessageQueue;
 import com.korwe.thecore.messages.CoreMessage;
 import org.apache.log4j.Logger;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -77,6 +76,7 @@ public class CoreSession implements CoreMessageHandler {
 
     public void stop() {
         processor.stop();
+        clientSender.close();
         serviceSender.close();
     }
 

@@ -1,0 +1,12 @@
+dependencies {
+    compile project(':api')
+    compile 'com.google.guava:guava:13.+'
+    compile 'com.jolbox:bonecp:0.7.1.RELEASE'
+    compile 'com.google.inject:guice:3.0'
+    compile 'com.google.inject.extensions:guice-servlet:3.0'
+    compile 'javax.servlet:servlet-api:2.5'
+}
+
+jar {
+    baseName = 'thecore-webcore'
+}

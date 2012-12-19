@@ -1,0 +1,10 @@
+dependencies {
+    compile 'log4j:log4j:1.2.16'
+    compile 'org.apache.qpid:qpid-client:0.12'
+    compile 'com.jamesmurty.utils:java-xmlbuilder:0.4'
+}
+
+jar {
+    baseName = 'thecore-api'
+}
+

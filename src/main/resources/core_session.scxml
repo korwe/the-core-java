@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" initial="logged_in">
+    <datamodel>
+        <data id="userdata">
+            <user xmlns="">
+                <username/>
+                <password/>
+            </user>
+        </data>
+        <data id="servicedata">
+            <services xmlns=""/>
+        </data>
+        <data id="messagedata">
+            <message xmlns="">
+                <guid/>
+                <type/>
+                <function/>
+            </message>
+        </data>
+    </datamodel>
+    <state id="prelogin">
+        <transition event="ServiceRequest.login" target="logging_in">
+            <assign location="Data(userdata, 'user/username')" expr="_eventdata.getParameterValue('username')"/>
+            <assign location="Data(userdata, 'user/password')" expr="_eventdata.getParameterValue('password')"/>
+        </transition>
+    </state>
+    <state id="logging_in">
+        <invoke targettype="x-coremessage" src="sendRequest">
+            <param name="queue" expr="'CoreToService'"/>
+            <param name="sessionId" expr="sessionId"/>
+            <param name="service" expr="'SingleSignonService'"/>
+            <param name="function" expr="'login'"/>
+            <param name="paramNames" expr="'username|password'"/>
+            <param name="paramValues" expr="Data(userdata, 'user/username') + '|' + Data(userdata, 'user/password')"/>
+            <param name="messageType" expr="'ServiceRequest'"/>
+        </invoke>
+        <transition event="logging_in.invoke.done" target="awaiting_login_response"/>
+    </state>
+    <state id="awaiting_login_response">
+        <transition event="ServiceResponse" cond="_eventdata.isSuccessful()" target="logged_in"/>
+        <transition event="ServiceResponse" cond="!_eventdata.isSuccessful()" target="prelogin"/>
+    </state>
+    <state id="logged_in">
+        <transition event="ServiceRequest.*" target="forward_to_service">
+            <assign location="Data(messagedata, 'message/guid')" expr="_eventdata.getGuid()"/>
+        </transition>
+        <transition event="ServiceResponse" target="forward_to_client">
+            <assign location="Data(messagedata, 'message/guid')" expr="_eventdata.getGuid()"/>
+        </transition>
+        <transition event="logout" target="logged_out"/>
+    </state>
+    <state id="forward_to_service">
+        <invoke targettype="x-coremessage" src="forwardRequest">
+            <param name="sessionId" expr="sessionId"/>
+            <param name="guid" expr="Data(messagedata, 'message/guid')"/>
+        </invoke>
+        <transition event="forward_to_service.invoke.done" target="logged_in"/>
+    </state>
+    <state id="forward_to_client">
+        <invoke targettype="x-coremessage" src="forwardResponse">
+            <param name="sessionId" expr="sessionId"/>
+            <param name="guid" expr="Data(messagedata, 'message/guid')"/>
+        </invoke>
+        <transition event="forward_to_client.invoke.done" target="logged_in"/>
+    </state>
+    <final id="logged_out"/>
+</scxml>

@@ -41,8 +41,8 @@ public class CoreSession implements CoreMessageHandler {
     private CoreMessageProcessor processor;
     private long lastMessageTime;
     private static final long MILLIS_PER_SEC = 1000L;
-    private CoreSender serviceSender = new CoreSender(MessageQueue.CoreToService);
-    private CoreSender clientSender = new CoreSender(MessageQueue.CoreToClient);
+    private CoreSender serviceSender;
+    private CoreSender clientSender;
     private Map<String, CoreMessage> cache = new ConcurrentHashMap<String, CoreMessage>(64);
 
     public String getSessionId() {
@@ -50,9 +50,12 @@ public class CoreSession implements CoreMessageHandler {
     }
 
     @Inject
-    public CoreSession(String sessionId, CoreMessageProcessor processor, int timeoutSeconds) {
+    public CoreSession(String sessionId, CoreMessageProcessor processor, int timeoutSeconds, CoreSender clientSender,
+                       CoreSender serviceSender) {
         this.processor = processor;
         this.sessionId = sessionId;
+        this.clientSender = clientSender;
+        this.serviceSender = serviceSender;
         this.timeoutMillis = MILLIS_PER_SEC * timeoutSeconds;
         lastMessageTime = System.currentTimeMillis();
         if (LOG.isDebugEnabled()) {
@@ -76,8 +79,6 @@ public class CoreSession implements CoreMessageHandler {
 
     public void stop() {
         processor.stop();
-        clientSender.close();
-        serviceSender.close();
     }
 
     public boolean isTimedOut() {

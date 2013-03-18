@@ -41,6 +41,7 @@ public class SessionManager extends AbstractExecutionThreadService implements Co
 
     private final CoreSubscriber subscriber;
     private final CoreSender clientSender;
+    private final CoreSender serviceSender;
     private final String processorType;
     private ExecutorService executorService;
     private int maxThreads;
@@ -53,6 +54,7 @@ public class SessionManager extends AbstractExecutionThreadService implements Co
         processorType = CoreConfig.getConfig().getSetting("processor_type");
         subscriber = new CoreSubscriber(MessageQueue.CoreToSession, CoreConfig.getConfig().getSetting("session_message_filter"));
         clientSender = new CoreSender(MessageQueue.CoreToClient);
+        serviceSender = new CoreSender(MessageQueue.CoreToService);
         maxThreads = CoreConfig.getConfig().getIntSetting("max_threads");
     }
 
@@ -68,6 +70,7 @@ public class SessionManager extends AbstractExecutionThreadService implements Co
         }
         subscriber.close();
         clientSender.close();
+        serviceSender.close();
         executorService.shutdown();
     }
 
@@ -139,7 +142,11 @@ public class SessionManager extends AbstractExecutionThreadService implements Co
         }
         else {
             CoreMessageProcessor processor = createProcessor(sessionId);
-            CoreSession session = new CoreSession(sessionId, processor, CoreConfig.getConfig().getIntSetting("timeout_seconds"));
+            processor.setClientSender(clientSender);
+            processor.setServiceSender(serviceSender);
+            CoreSession session = new CoreSession(sessionId, processor,
+                                                  CoreConfig.getConfig().getIntSetting("timeout_seconds"), clientSender,
+                                                  serviceSender);
             sessions.put(sessionId, session);
             response = new InitiateSessionResponse(sessionId, message.getGuid(), true);
         }

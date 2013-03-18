@@ -19,6 +19,7 @@
 
 package com.korwe.thecore.session;
 
+import com.korwe.thecore.api.CoreSender;
 import com.korwe.thecore.messages.CoreMessage;
 
 /**
@@ -35,4 +36,7 @@ public interface CoreMessageProcessor {
     public String getSessionId();
 
     public void stop();
+
+    public void setClientSender(CoreSender clientSender);
+    public void setServiceSender(CoreSender serviceSender);
 }

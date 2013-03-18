@@ -69,8 +69,6 @@ public class BasicMessageProcessor implements CoreMessageProcessor {
     @Override
     public void initialize(String sessionId) {
         this.sessionId = sessionId;
-        clientSender = new CoreSender(MessageQueue.CoreToClient);
-        serviceSender = new CoreSender(MessageQueue.CoreToService);
     }
 
     @Override
@@ -80,15 +78,21 @@ public class BasicMessageProcessor implements CoreMessageProcessor {
 
     @Override
     public void stop() {
-        clientSender.close();
-        serviceSender.close();
     }
 
     protected CoreSender getClientSender() {
         return clientSender;
     }
 
+    public void setClientSender(CoreSender clientSender) {
+        this.clientSender = clientSender;
+    }
+
     protected CoreSender getServiceSender() {
         return serviceSender;
+    }
+
+    public void setServiceSender(CoreSender serviceSender) {
+        this.serviceSender = serviceSender;
     }
 }

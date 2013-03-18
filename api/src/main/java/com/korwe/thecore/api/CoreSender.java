@@ -35,6 +35,7 @@ public class CoreSender {
     private final MessageQueue queue;
     private Connection connection;
     private CoreMessageSerializer serializer;
+    private final Session session;
 
     public CoreSender(MessageQueue queue) {
         this.queue = queue;
@@ -49,10 +50,14 @@ public class CoreSender {
         if (LOG.isInfoEnabled()) {
             LOG.info("Connected");
         }
+
+        session = connection.createSession();
         serializer = new CoreMessageXmlSerializer();
     }
 
     public void close() {
+        session.sync();
+        session.close();
         connection.close();
     }
 
@@ -91,14 +96,11 @@ public class CoreSender {
         String serialized = serializer.serialize(message);
         DeliveryProperties props = new DeliveryProperties();
         props.setRoutingKey(routing);
-        Session session = connection.createSession();
         session.messageTransfer(destination, MessageAcceptMode.EXPLICIT, MessageAcquireMode.PRE_ACQUIRED,
                                 new Header(props), serialized);
-        session.sync();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sent: " + serialized);
         }
-        session.close();
     }
 
     public MessageQueue getQueue() {

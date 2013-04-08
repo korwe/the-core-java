@@ -38,6 +38,10 @@ public class CoreSyndicationService extends CorePingService {
 
     private SyndicationService syndicationService = new SyndicationServiceImpl();
 
+    public CoreSyndicationService(int maxThreads) {
+        super(maxThreads);
+    }
+
     @Override
     protected void handleServiceRequest(ServiceRequest request) {
         String function = request.getFunction();

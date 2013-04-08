@@ -52,8 +52,8 @@ public class CoreServices {
         final Service sessionManager = new SessionManager();
         final Server servletServer = configureServer();
         final Service webCoreListener = new WebCoreListener();
-        services.add(new CorePingService());
-        services.add(new CoreSyndicationService());
+        services.add(new CorePingService(10));
+        services.add(new CoreSyndicationService(10));
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override

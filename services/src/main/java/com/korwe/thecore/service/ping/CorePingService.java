@@ -19,15 +19,15 @@
 
 package com.korwe.thecore.service.ping;
 
-import com.google.common.util.concurrent.AbstractIdleService;
 import com.korwe.thecore.api.*;
 import com.korwe.thecore.messages.*;
+import com.korwe.thecore.service.AbstractCoreService;
 import org.apache.log4j.Logger;
 
 /**
  * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
  */
-public class CorePingService extends AbstractIdleService implements CoreMessageHandler {
+public class CorePingService extends AbstractCoreService implements CoreMessageHandler {
 
     private static final Logger LOG = Logger.getLogger(CorePingService.class);
     private static final String BAD_MESSAGE_TYPE = "Message is not a service request";
@@ -38,6 +38,10 @@ public class CorePingService extends AbstractIdleService implements CoreMessageH
     private CoreSender dataSender;
     private CoreSubscriber requestSubscriber;
     private PingService pingService = new PingServiceImpl();
+
+    public CorePingService(int maxThreads) {
+        super(maxThreads);
+    }
 
     @Override
     public void handleMessage(CoreMessage message) {

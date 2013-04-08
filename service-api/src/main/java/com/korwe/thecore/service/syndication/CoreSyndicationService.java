@@ -22,6 +22,7 @@ package com.korwe.thecore.service.syndication;
 import com.korwe.thecore.messages.DataResponse;
 import com.korwe.thecore.messages.ServiceRequest;
 import com.korwe.thecore.messages.ServiceResponse;
+import com.korwe.thecore.service.SyndicationService;
 import com.korwe.thecore.service.ping.CorePingService;
 import com.sun.syndication.feed.synd.SyndEntry;
 import org.apache.log4j.Logger;

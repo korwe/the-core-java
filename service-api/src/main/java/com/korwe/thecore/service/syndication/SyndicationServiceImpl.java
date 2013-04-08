@@ -19,6 +19,7 @@
 
 package com.korwe.thecore.service.syndication;
 
+import com.korwe.thecore.service.SyndicationService;
 import com.korwe.thecore.service.ping.PingServiceImpl;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;

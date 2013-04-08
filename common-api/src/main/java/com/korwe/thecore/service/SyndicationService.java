@@ -17,9 +17,9 @@
  *  along with TheCore.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.korwe.thecore.service.syndication;
+package com.korwe.thecore.service;
 
-import com.korwe.thecore.service.ping.PingService;
+import com.korwe.thecore.service.PingService;
 import com.sun.syndication.feed.synd.SyndEntry;
 
 import java.util.List;

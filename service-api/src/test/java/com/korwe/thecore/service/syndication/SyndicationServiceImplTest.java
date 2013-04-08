@@ -19,6 +19,7 @@
 
 package com.korwe.thecore.service.syndication;
 
+import com.korwe.thecore.service.SyndicationService;
 import com.sun.syndication.feed.synd.SyndEntry;
 import org.junit.Before;
 import org.junit.Test;

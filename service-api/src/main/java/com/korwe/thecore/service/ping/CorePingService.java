@@ -21,7 +21,7 @@ package com.korwe.thecore.service.ping;
 
 import com.korwe.thecore.api.*;
 import com.korwe.thecore.messages.*;
-import com.korwe.thecore.service.AbstractCoreService;
+import com.korwe.thecore.service.*;
 import org.apache.log4j.Logger;
 
 /**
@@ -37,7 +37,7 @@ public class CorePingService extends AbstractCoreService implements CoreMessageH
     private CoreSender responseSender;
     private CoreSender dataSender;
     private CoreSubscriber requestSubscriber;
-    private PingService pingService = new PingServiceImpl();
+    private com.korwe.thecore.service.PingService pingService = new PingServiceImpl();
 
     public CorePingService(int maxThreads) {
         super(maxThreads);

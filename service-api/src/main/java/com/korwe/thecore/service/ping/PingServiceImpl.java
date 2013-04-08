@@ -22,7 +22,7 @@ package com.korwe.thecore.service.ping;
 /**
  * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
  */
-public class PingServiceImpl implements PingService {
+public class PingServiceImpl implements com.korwe.thecore.service.PingService {
 
     @Override
     public boolean ping() {

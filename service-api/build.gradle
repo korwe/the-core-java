@@ -1,10 +1,12 @@
 dependencies {
+    compile project(':common-api')
     compile project(':sessions')
     compile project(':webcore')
     compile 'org.eclipse.jetty:jetty-servlet:7.3.1+'
+    runtime 'com.thoughtworks.xstream:xstream:1.4.4'
     compile 'rome:rome:1.0'
 }
 
 jar {
-    baseName = 'thecore-services'
+    baseName = 'thecore-service-api'
 }

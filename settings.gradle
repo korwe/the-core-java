@@ -1,1 +1,1 @@
-include 'api', 'sessions', 'webcore', 'services'
+include 'common-api', 'sessions', 'webcore', 'service-api'

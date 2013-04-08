@@ -1,5 +1,5 @@
 dependencies {
-    compile project(':api')
+    compile project(':common-api')
     compile 'commons-scxml:commons-scxml:0.9'
     compile 'com.google.guava:guava:13.+'
     compile 'com.google.inject:guice:3.0'

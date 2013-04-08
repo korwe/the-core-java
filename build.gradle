@@ -22,13 +22,12 @@ apply plugin: 'application'
 mainClassName = 'com.korwe.thecore.service.CoreServices'
 
 dependencies {
-    runtime project(':services')
+    runtime project(':service-api')
     runtime project(':sessions')
     runtime project(':webcore')
-    runtime project(':api')
+    runtime project(':common-api')
     runtime 'postgresql:postgresql:8.4-702.jdbc4'
     runtime 'org.slf4j:slf4j-log4j12:1.6.1'
-    runtime 'com.thoughtworks.xstream:xstream:1.4.4'
 }
 
 distZip {

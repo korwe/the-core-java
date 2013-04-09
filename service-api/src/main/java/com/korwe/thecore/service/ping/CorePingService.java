@@ -118,29 +118,6 @@ public class CorePingService extends AbstractCoreService implements CoreMessageH
         responseSender.sendMessage(response);
     }
 
-    /**
-     * Start the service.
-     */
-    @Override
-    protected void startUp() throws Exception {
-        LOG.info(getServiceName() + " starting");
-        responseSender = new CoreSender(MessageQueue.ServiceToCore);
-        dataSender = new CoreSender(MessageQueue.Data);
-        requestSubscriber = new CoreSubscriber(MessageQueue.CoreToService, getServiceName());
-        requestSubscriber.connect(this);
-    }
-
-    /**
-     * Stop the service.
-     */
-    @Override
-    protected void shutDown() throws Exception {
-        LOG.info(getServiceName() + " stopping");
-        requestSubscriber.close();
-        dataSender.close();
-        responseSender.close();
-    }
-
     public String getServiceName() {
         return getClass().getSimpleName().substring(4);
     }

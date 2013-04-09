@@ -37,10 +37,15 @@ public class CoreSyndicationService extends CorePingService {
     private static final Logger LOG = Logger.getLogger(SyndicationService.class);
     private static final String FEED_ERROR = "The feed could not be updated";
 
-    private SyndicationService syndicationService = new SyndicationServiceImpl();
+    private SyndicationService syndicationService;
 
     public CoreSyndicationService(int maxThreads) {
         super(maxThreads);
+    }
+
+    public CoreSyndicationService(SyndicationService syndicationService, int maxThreads){
+        super(maxThreads);
+        this.syndicationService = syndicationService;
     }
 
     @Override

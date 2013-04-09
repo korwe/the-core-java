@@ -20,7 +20,6 @@
 package com.korwe.thecore.service;
 
 import com.korwe.thecore.annotation.ParamNames;
-import com.korwe.thecore.service.PingService;
 import com.sun.syndication.feed.synd.SyndEntry;
 
 import java.util.List;

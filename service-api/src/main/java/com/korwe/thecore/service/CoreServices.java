@@ -23,7 +23,9 @@ import com.google.common.util.concurrent.Service;
 import com.google.inject.servlet.GuiceFilter;
 import com.korwe.thecore.api.CoreConfig;
 import com.korwe.thecore.service.ping.CorePingService;
+import com.korwe.thecore.service.ping.PingServiceImpl;
 import com.korwe.thecore.service.syndication.CoreSyndicationService;
+import com.korwe.thecore.service.syndication.SyndicationServiceImpl;
 import com.korwe.thecore.session.SessionManager;
 import com.korwe.thecore.webcore.listener.WebCoreListener;
 import com.korwe.thecore.webcore.servlet.GuiceServletConfig;
@@ -52,8 +54,8 @@ public class CoreServices {
         final Service sessionManager = new SessionManager();
         final Server servletServer = configureServer();
         final Service webCoreListener = new WebCoreListener();
-        services.add(new CorePingService(10));
-        services.add(new CoreSyndicationService(10));
+        services.add(new CorePingService(new PingServiceImpl(), 10));
+        services.add(new CoreSyndicationService(new SyndicationServiceImpl(), 10));
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override

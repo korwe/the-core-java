@@ -37,10 +37,15 @@ public class CorePingService extends AbstractCoreService implements CoreMessageH
     private CoreSender responseSender;
     private CoreSender dataSender;
     private CoreSubscriber requestSubscriber;
-    private com.korwe.thecore.service.PingService pingService = new PingServiceImpl();
+    private PingService pingService;
 
     public CorePingService(int maxThreads) {
         super(maxThreads);
+    }
+
+    public CorePingService(PingService pingService, int maxThreads){
+        super(maxThreads);
+        this.pingService = pingService;
     }
 
     @Override

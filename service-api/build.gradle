@@ -10,3 +10,11 @@ dependencies {
 jar {
     baseName = 'thecore-service-api'
 }
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            pom.artifactId = jar.baseName
+        }
+    }
+}

@@ -8,3 +8,11 @@ dependencies {
 jar {
     baseName = 'thecore-sessionmanager'
 }
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            pom.artifactId = jar.baseName
+        }
+    }
+}

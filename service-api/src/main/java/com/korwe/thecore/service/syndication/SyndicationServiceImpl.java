@@ -19,6 +19,8 @@
 
 package com.korwe.thecore.service.syndication;
 
+import com.korwe.thecore.dto.syndication.SyndicationEntry;
+import com.korwe.thecore.dto.syndication.SyndicationFeed;
 import com.korwe.thecore.service.SyndicationService;
 import com.korwe.thecore.service.ping.PingServiceImpl;
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -43,20 +45,32 @@ public class SyndicationServiceImpl extends PingServiceImpl implements Syndicati
     private static final Logger LOG = Logger.getLogger(SyndicationService.class);
 
     @Override
-    public List<SyndEntry> fetchLatest(String feedUrl, int maxEntries) {
+    public SyndicationFeed fetchLatest(String feedUrl, int maxEntries) {
         try {
             URL url = new URL(feedUrl);
             SyndFeedInput input = new SyndFeedInput();
             SyndFeed feed = input.build(new XmlReader(url));
             List entries = feed.getEntries();
+
+
+            SyndicationFeed syndicationFeed = new SyndicationFeed();
+            syndicationFeed.setEntries(new ArrayList<SyndicationEntry>(maxEntries));
+
+            //Convert entries to type we want to use for transferring
             if (null != entries) {
-                List<SyndEntry> latest = new ArrayList<SyndEntry>(maxEntries);
-                Iterator it = entries.iterator();
-                for (int i = 0; it.hasNext() && i < maxEntries; i++) {
-                    latest.add((SyndEntry) it.next());
+                Iterator<SyndEntry> syndEntryIterator = entries.iterator();
+                for (int i=0; i < maxEntries && syndEntryIterator.hasNext(); i++){
+                    SyndEntry entry = syndEntryIterator.next();
+                    SyndicationEntry syndicationEntry = new SyndicationEntry();
+                    syndicationEntry.setTitle(entry.getTitle());
+                    syndicationEntry.setDescription(entry.getDescription().getValue());
+                    syndicationEntry.setLink(entry.getLink());
+                    syndicationEntry.setDate(entry.getPublishedDate());
+
+                    syndicationFeed.getEntries().add(syndicationEntry);
                 }
-                return latest;
             }
+            return syndicationFeed;
         }
         catch (MalformedURLException e) {
             LOG.error("Invalid feed URL", e);

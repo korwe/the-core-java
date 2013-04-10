@@ -19,12 +19,11 @@
 
 package com.korwe.thecore.service.syndication;
 
+import com.korwe.thecore.dto.syndication.SyndicationEntry;
+import com.korwe.thecore.dto.syndication.SyndicationFeed;
 import com.korwe.thecore.service.SyndicationService;
-import com.sun.syndication.feed.synd.SyndEntry;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -43,10 +42,11 @@ public class SyndicationServiceImplTest {
     @Test
     public void fetchShouldWorkWithAtom() throws Exception {
         String feedUrl = "http://www.theregister.co.uk/headlines.atom";
-        List<SyndEntry> entries = service.fetchLatest(feedUrl, 5);
-        assertNotNull(entries);
-        assertEquals(5, entries.size());
-        for (SyndEntry entry: entries) {
+        SyndicationFeed feed = service.fetchLatest(feedUrl, 5);
+        assertNotNull(feed);
+        assertNotNull(feed.getEntries());
+        assertEquals(5, feed.getEntries().size());
+        for (SyndicationEntry entry: feed.getEntries()) {
             assertNotNull(entry);
             System.out.println("Atom entry = " + entry);
         }
@@ -55,10 +55,10 @@ public class SyndicationServiceImplTest {
     @Test
     public void fetchShouldWorkWithRss() throws Exception {
         String feedUrl = "http://feeds.bbci.co.uk/news/rss.xml";
-        List<SyndEntry> entries = service.fetchLatest(feedUrl, 5);
-        assertNotNull(entries);
-        assertEquals(5, entries.size());
-        for (SyndEntry entry: entries) {
+        SyndicationFeed feed = service.fetchLatest(feedUrl, 5);
+        assertNotNull(feed.getEntries());
+        assertEquals(5, feed.getEntries().size());
+        for (SyndicationEntry entry: feed.getEntries()) {
             assertNotNull(entry);
             System.out.println("RSS entry = " + entry);
         }

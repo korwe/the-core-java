@@ -20,7 +20,8 @@
 package com.korwe.thecore.service;
 
 import com.korwe.thecore.annotation.ParamNames;
-import com.sun.syndication.feed.synd.SyndEntry;
+import com.korwe.thecore.dto.syndication.SyndicationEntry;
+import com.korwe.thecore.dto.syndication.SyndicationFeed;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ import java.util.List;
  * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
  */
 public interface SyndicationService extends PingService {
-
+    public static final String serviceName = "SyndicationService";
     @ParamNames({"feedUrl", "maxEntries"})
-    public List<SyndEntry> fetchLatest(String feedUrl, int maxEntries);
+    public SyndicationFeed fetchLatest(String feedUrl, int maxEntries);
 }

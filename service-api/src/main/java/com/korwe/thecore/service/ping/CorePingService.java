@@ -22,6 +22,7 @@ package com.korwe.thecore.service.ping;
 import com.korwe.thecore.api.*;
 import com.korwe.thecore.messages.*;
 import com.korwe.thecore.service.*;
+import com.thoughtworks.xstream.XStream;
 import org.apache.log4j.Logger;
 
 /**
@@ -30,17 +31,15 @@ import org.apache.log4j.Logger;
 public class CorePingService extends AbstractCoreService implements CoreMessageHandler {
 
     private static final Logger LOG = Logger.getLogger(CorePingService.class);
-    private static final String BAD_MESSAGE_TYPE = "Message is not a service request";
-    private static final String BAD_SERVICE = "The request is not for this service";
-    private static final String BAD_FUNCTION = "Unsupported function: ";
 
-    private CoreSender responseSender;
-    private CoreSender dataSender;
-    private CoreSubscriber requestSubscriber;
     private PingService pingService;
 
     public CorePingService(int maxThreads) {
         super(maxThreads);
+    }
+
+    public CorePingService(int maxThreads, XStream xStream) {
+        super(maxThreads, xStream);
     }
 
     public CorePingService(PingService pingService, int maxThreads){
@@ -48,34 +47,9 @@ public class CorePingService extends AbstractCoreService implements CoreMessageH
         this.pingService = pingService;
     }
 
-    @Override
-    public void handleMessage(CoreMessage message) {
-        ServiceRequest request = toServiceRequest(message);
-        if (null == request) {
-            handleBadMessageType(message);
-        }
-        else if (!getServiceName().equals(message.getChoreography())) {
-            handleBadRequest(request);
-        }
-        else {
-            handleServiceRequest(request);
-        }
-    }
-
-    protected void handleBadMessageType(CoreMessage message) {
-        LOG.error(BAD_MESSAGE_TYPE);
-        ServiceResponse response = new ServiceResponse(message.getSessionId(), message.getGuid(), false, false);
-        response.setErrorCode("BadMessageType");
-        response.setErrorMessage(BAD_MESSAGE_TYPE);
-        sendResponse(response);
-    }
-
-    protected void handleBadRequest(ServiceRequest request) {
-        LOG.error(BAD_SERVICE);
-        ServiceResponse response = new ServiceResponse(request.getSessionId(), request.getGuid(), false, false);
-        response.setErrorCode("BadService");
-        response.setErrorMessage(BAD_SERVICE);
-        sendResponse(response);
+    public CorePingService(PingService pingService, int maxThreads, XStream xStream){
+        super(maxThreads, xStream);
+        this.pingService = pingService;
     }
 
     protected void handleServiceRequest(ServiceRequest request) {
@@ -85,40 +59,12 @@ public class CorePingService extends AbstractCoreService implements CoreMessageH
         handlePingRequest(request);
     }
 
-    protected void handleUnsupportedFunctionRequest(ServiceRequest request) {
-        LOG.error(BAD_FUNCTION + request.getFunction());
-        ServiceResponse response = new ServiceResponse(request.getSessionId(), request.getGuid(), false, false);
-        response.setErrorCode("BadFunction");
-        response.setErrorMessage(BAD_FUNCTION + request.getFunction());
-        sendResponse(response);
-    }
-
-    protected ServiceRequest toServiceRequest(CoreMessage message) {
-        if (CoreMessage.MessageType.ServiceRequest != message.getMessageType()) {
-            return null;
-        }
-        ServiceRequest request = (ServiceRequest) message;
-        return request;
-    }
-
     protected void handlePingRequest(ServiceRequest request) {
-        boolean pingResult = pingService.ping();
+        boolean pingResult = pingService != null ? pingService.ping() : true;
         ServiceResponse pingResponse = new ServiceResponse(request.getSessionId(), request.getGuid(), pingResult, true);
         sendResponse(pingResponse);
         String resultData = "<pingResult>" + pingResult + "</pingResult>";
         DataResponse dataResponse = new DataResponse(request.getSessionId(), request.getGuid(), resultData);
         sendData(dataResponse);
-    }
-
-    protected void sendData(DataResponse dataResponse) {
-        dataSender.sendMessage(dataResponse, dataResponse.getSessionId());
-    }
-
-    protected void sendResponse(ServiceResponse response) {
-        responseSender.sendMessage(response);
-    }
-
-    public String getServiceName() {
-        return getClass().getSimpleName().substring(4);
     }
 }

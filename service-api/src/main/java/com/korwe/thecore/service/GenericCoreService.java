@@ -23,10 +23,10 @@ public class GenericCoreService<S> extends CorePingService {
 
     private S delegate;
     private Map<String, ServiceFunction> functions;
-    private XStream xStream;
     private Logger log = LoggerFactory.getLogger(this.getClass());
     private Class<S> serviceClass;
     private String serviceName;
+
 
     @SuppressWarnings("unchecked")
     public GenericCoreService(S delegate, String serviceName, int maxThreads) {
@@ -34,7 +34,15 @@ public class GenericCoreService<S> extends CorePingService {
         this.delegate = delegate;
         this.serviceName = serviceName;
         this.serviceClass = (Class<S>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-        this.xStream = new XStream();
+        this.functions = createFunctionMap();
+    }
+
+
+    public GenericCoreService(S delegate, String serviceName, int maxThreads, XStream xStream) {
+        super(maxThreads, xStream);
+        this.delegate = delegate;
+        this.serviceName = serviceName;
+        this.serviceClass = (Class<S>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         this.functions = createFunctionMap();
     }
 
@@ -59,7 +67,7 @@ public class GenericCoreService<S> extends CorePingService {
                 Object[] params = new Object[paramCount];
                 for (int i = 0; i < paramCount; i++) {
                     String requestParam = request.getParameterValue(paramNames[i]);
-                    params[i] = requestParam == null || requestParam.isEmpty() ? null : xStream.fromXML(requestParam);
+                    params[i] = requestParam == null || requestParam.isEmpty() ? null : getXStream().fromXML(requestParam);
                 }
                 try {
                     Object returnValue = method.invoke(delegate, params);
@@ -89,7 +97,7 @@ public class GenericCoreService<S> extends CorePingService {
             sendSuccessResponse(request);
         }
         else {
-            sendSuccessDataResponses(request, xStream.toXML(returnValue));
+            sendSuccessDataResponses(request, returnValue);
         }
     }
 

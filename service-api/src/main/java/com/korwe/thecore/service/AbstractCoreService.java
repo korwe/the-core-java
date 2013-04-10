@@ -36,12 +36,18 @@ public abstract class AbstractCoreService extends AbstractIdleService implements
     private CoreSender responseSender;
     private CoreSender dataSender;
     private CoreSubscriber requestSubscriber;
-    private XStream xstream = new XStream();
+    private XStream xStream;
     private ExecutorService executorService;
     private int maxThreads = 10;
 
     protected AbstractCoreService(int maxThreads) {
         if (maxThreads > 0) this.maxThreads = maxThreads;
+        this.xStream = new XStream();
+    }
+
+    protected AbstractCoreService(int maxThreads, XStream xStream) {
+        if (maxThreads > 0) this.maxThreads = maxThreads;
+        this.xStream = xStream;
     }
 
     @Override
@@ -104,11 +110,8 @@ public abstract class AbstractCoreService extends AbstractIdleService implements
         sendResponse(response);
     }
 
-    protected void sendSuccessDataResponses(ServiceRequest request, Map<String, Object> data) {
-        DataResponse dataResponse = new DataResponse(request.getSessionId(), request.getGuid(), xstream.toXML(data));
-        sendData(dataResponse);
-        ServiceResponse response = new ServiceResponse(request.getSessionId(), request.getGuid(), true, true);
-        sendResponse(response);
+    protected void sendSuccessDataResponses(ServiceRequest request, Object o){
+        sendSuccessDataResponses(request, xStream.toXML(o));
     }
 
     protected void sendSuccessResponse(ServiceRequest request) {
@@ -156,6 +159,10 @@ public abstract class AbstractCoreService extends AbstractIdleService implements
         requestSubscriber.close();
         dataSender.close();
         responseSender.close();
+    }
+
+    protected XStream getXStream(){
+        return this.xStream;
     }
 
     public String getServiceName() {

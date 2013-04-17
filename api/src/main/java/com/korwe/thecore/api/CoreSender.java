@@ -25,6 +25,9 @@ import com.korwe.thecore.messages.CoreMessageXmlSerializer;
 import org.apache.log4j.Logger;
 import org.apache.qpid.transport.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
  */
@@ -96,8 +99,15 @@ public class CoreSender {
         String serialized = serializer.serialize(message);
         DeliveryProperties props = new DeliveryProperties();
         props.setRoutingKey(routing);
+        MessageProperties msgProps = new MessageProperties();
+        Map<String, Object> appHeaders = new HashMap<String, Object>();
+        appHeaders.put("sessionId", message.getSessionId());
+        appHeaders.put("choreography", message.getChoreography());
+        appHeaders.put("guid", message.getGuid());
+        appHeaders.put("messageType", message.getMessageType().name());
+        msgProps.setApplicationHeaders(appHeaders);
         session.messageTransfer(destination, MessageAcceptMode.EXPLICIT, MessageAcquireMode.PRE_ACQUIRED,
-                                new Header(props), serialized);
+                                new Header(props, msgProps), serialized);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sent: " + serialized);
         }

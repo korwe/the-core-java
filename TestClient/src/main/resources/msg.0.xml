@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coreMessage>
+  <sessionId>test-session-001</sessionId>
+  <messageType>ServiceRequest</messageType>
+  <guid>b18ecace-8cb5-4625-89b6-6de6b7f6e977</guid>
+  <choreography>SyndicationService</choreography>
+  <description>Test message</description>
+  <timeStamp>20130409T143312.123</timeStamp>
+  <function>fetchLatest</function>
+  <parameters>
+    <parameter>
+      <name>feedUrl</name>
+      <value>http://newsrss.bbc.co.uk/rss/newsonline_world_edition/front_page/rss.xml</value>
+    </parameter>
+    <parameter>
+      <name>maxEntries</name>
+      <value>10</value>
+    </parameter>
+  </parameters>
+</coreMessage>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+  <context:annotation-config/>
+
+  <context:component-scan base-package="com.korwe.thecore.router"/>
+
+  <context:property-placeholder location="classpath:/router.properties"/>
+
+  <camel:camelContext id="camel" trace="true">
+    <camel:contextScan>
+      <camel:excludes>**Fake*</camel:excludes>
+    </camel:contextScan>
+  </camel:camelContext>
+
+  <bean id="amqp" class="org.apache.camel.component.amqp.AMQPComponent">
+    <property name="connectionFactory">
+      <bean class="org.apache.qpid.client.AMQConnectionFactory">
+        <property name="connectionURLString" value="amqp://${amqp.user}:${amqp.pass}@${amqp.vhost}?brokerlist='tcp://${amqp.host}:${amqp.port}'"/>
+      </bean>
+    </property>
+  </bean>
+</beans>

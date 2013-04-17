@@ -1,1 +1,1 @@
-include 'api', 'sessions', 'webcore', 'services'
+include 'api', 'sessions', 'webcore', 'services', 'router', 'TestClient'

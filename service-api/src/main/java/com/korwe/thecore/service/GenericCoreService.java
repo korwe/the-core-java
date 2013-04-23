@@ -2,19 +2,20 @@ package com.korwe.thecore.service;
 
 import com.google.common.collect.ImmutableMap;
 import com.korwe.thecore.annotation.ParamNames;
+import com.korwe.thecore.dto.syndication.SyndicationEntry;
 import com.korwe.thecore.exception.CoreException;
 import com.korwe.thecore.exception.CoreSystemException;
 import com.korwe.thecore.messages.ServiceRequest;
 import com.korwe.thecore.service.ping.CorePingService;
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
-import java.util.Arrays;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
@@ -167,6 +168,22 @@ public class GenericCoreService<S> extends CorePingService {
             result = 31 * result + method.hashCode();
             result = 31 * result + (paramNames != null ? Arrays.hashCode(paramNames) : 0);
             return result;
+        }
+
+        public static void main(String[] args){
+            XStream xStream = new XStream();
+            Map map = new HashMap();
+            map.put("a",10);
+            map.put("b", 20);
+            map.put("c", 30);
+            map.put("d", 50);
+            map.put("e", 60);
+            SyndicationEntry syndicationEntry = new SyndicationEntry();
+            syndicationEntry.setTitle("hi");
+            syndicationEntry.setLink("hi");
+            map.put("f", syndicationEntry);
+            System.out.println(xStream.toXML(map));
+            System.out.println(xStream.toXML(syndicationEntry));
         }
     }
 

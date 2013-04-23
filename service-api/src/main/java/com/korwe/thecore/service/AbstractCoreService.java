@@ -15,7 +15,7 @@ import com.thoughtworks.xstream.XStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -163,6 +163,10 @@ public abstract class AbstractCoreService extends AbstractIdleService implements
 
     protected XStream getXStream(){
         return this.xStream;
+    }
+
+    public void setXStream(XStream xStream){
+        this.xStream=xStream;
     }
 
     public String getServiceName() {

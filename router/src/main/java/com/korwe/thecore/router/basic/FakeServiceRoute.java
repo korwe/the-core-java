@@ -1,6 +1,7 @@
-package com.korwe.thecore.router;
+package com.korwe.thecore.router.basic;
 
 import com.korwe.thecore.api.MessageQueue;
+import com.korwe.thecore.router.AmqpUriPart;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.springframework.stereotype.Component;
 

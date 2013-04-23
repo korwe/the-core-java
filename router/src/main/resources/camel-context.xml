@@ -16,6 +16,7 @@
   <camel:camelContext id="camel" trace="true">
     <camel:contextScan>
       <camel:excludes>**Fake*</camel:excludes>
+      <camel:includes>**basic*</camel:includes>
     </camel:contextScan>
   </camel:camelContext>
 

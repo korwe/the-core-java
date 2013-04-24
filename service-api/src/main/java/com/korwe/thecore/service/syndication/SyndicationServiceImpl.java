@@ -47,6 +47,8 @@ public class SyndicationServiceImpl extends PingServiceImpl implements Syndicati
     @Override
     public SyndicationFeed fetchLatest(String feedUrl, int maxEntries) {
         try {
+            LOG.info("fetching feed url "+feedUrl);
+            LOG.info("fetching "+maxEntries+ "entries");
             URL url = new URL(feedUrl);
             SyndFeedInput input = new SyndFeedInput();
             SyndFeed feed = input.build(new XmlReader(url));
@@ -55,6 +57,9 @@ public class SyndicationServiceImpl extends PingServiceImpl implements Syndicati
 
             SyndicationFeed syndicationFeed = new SyndicationFeed();
             syndicationFeed.setEntries(new ArrayList<SyndicationEntry>(maxEntries));
+            syndicationFeed.setTitle(feed.getTitle());
+            syndicationFeed.setDescription(feed.getDescription());
+            syndicationFeed.setUrl(feedUrl);
 
             //Convert entries to type we want to use for transferring
             if (null != entries) {

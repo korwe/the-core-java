@@ -26,14 +26,24 @@ public class ClientToCoreRoute extends SpringRouteBuilder {
                                                         MessageQueue.CoreToService.getQueueName(),
                                                         AmqpUriPart.Options.getValue()))).end()
                 .when(header("messageType").isEqualTo(CoreMessage.MessageType.InitiateSessionRequest.name()))
-                    .process(new InitiateSessionProcessor())
+                    .process(new SessionResponseProcessor() {
+                        @Override
+                        protected CoreResponse createResponse(String sessionId, String guid) {
+                            return new InitiateSessionResponse(sessionId, guid, true);
+                        }
+                    })
                         .recipientList(simple(String.format("%s%s/%s.${in.header.sessionId}//?%s",
                                                             AmqpUriPart.TopicPrefix.getValue(),
                                                             MessageQueue.TOPIC_EXCHANGE,
                                                             MessageQueue.CoreToClient.getQueueName(),
                                                             AmqpUriPart.Options.getValue()))).end()
                 .when(header("messageType").isEqualTo(CoreMessage.MessageType.KillSessionRequest.name()))
-                    .process(new KillSessionProcessor())
+                    .process(new SessionResponseProcessor() {
+                        @Override
+                        protected CoreResponse createResponse(String sessionId, String guid) {
+                            return new KillSessionResponse(sessionId, guid, true);
+                        }
+                    })
                         .recipientList(simple(String.format("%s%s/%s.${in.header.sessionId}//?%s",
                                                             AmqpUriPart.TopicPrefix.getValue(),
                                                             MessageQueue.TOPIC_EXCHANGE,
@@ -42,7 +52,7 @@ public class ClientToCoreRoute extends SpringRouteBuilder {
 
     }
 
-    private class InitiateSessionProcessor implements Processor {
+    private abstract class SessionResponseProcessor implements Processor {
 
         CoreMessageSerializer serializer = new CoreMessageXmlSerializer();
 
@@ -51,25 +61,12 @@ public class ClientToCoreRoute extends SpringRouteBuilder {
             Message in = exchange.getIn();
             String sessionId = in.getHeader("sessionId", String.class);
             String guid = in.getHeader("guid", String.class);
-            InitiateSessionResponse response = new InitiateSessionResponse(sessionId, guid, true);
+            CoreResponse response = createResponse(sessionId, guid);
             in.setBody(serializer.serialize(response));
             in.setHeader("messageType", response.getMessageType().name());
         }
-    }
 
-    private class KillSessionProcessor implements Processor {
-
-        CoreMessageSerializer serializer = new CoreMessageXmlSerializer();
-
-        @Override
-        public void process(Exchange exchange) throws Exception {
-            Message in = exchange.getIn();
-            String sessionId = in.getHeader("sessionId", String.class);
-            String guid = in.getHeader("guid", String.class);
-            KillSessionResponse response = new KillSessionResponse(sessionId, guid, true);
-            in.setBody(serializer.serialize(response));
-            in.setHeader("messageType", response.getMessageType().name());
-        }
+        protected abstract CoreResponse createResponse(String sessionId, String guid);
     }
 
 }

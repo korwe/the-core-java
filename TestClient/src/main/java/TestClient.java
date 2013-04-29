@@ -1,7 +1,5 @@
 import com.korwe.thecore.api.*;
-import com.korwe.thecore.messages.CoreMessage;
-import com.korwe.thecore.messages.CoreMessageSerializer;
-import com.korwe.thecore.messages.CoreMessageXmlSerializer;
+import com.korwe.thecore.messages.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +11,7 @@ import java.nio.charset.Charset;
  */
 public class TestClient implements CoreMessageHandler {
 
+    private static final String SESSION_ID = "test-session-001";
     private Logger log = LoggerFactory.getLogger(this.getClass());
     private CoreSender sender;
     private CoreSubscriber subscriber;
@@ -24,9 +23,9 @@ public class TestClient implements CoreMessageHandler {
     private void connect() {
         CoreConfig.initialize(this.getClass().getResourceAsStream("/coreconfig.xml"));
         sender = new CoreSender(MessageQueue.ClientToCore);
-        subscriber = new CoreSubscriber(MessageQueue.CoreToClient, "test-session-001");
+        subscriber = new CoreSubscriber(MessageQueue.CoreToClient, SESSION_ID);
         subscriber.connect(this);
-        dataSubscriber = new CoreSubscriber(MessageQueue.Data, "test-session-001");
+        dataSubscriber = new CoreSubscriber(MessageQueue.Data, SESSION_ID);
         dataSubscriber.connect(this);
     }
 
@@ -71,8 +70,12 @@ public class TestClient implements CoreMessageHandler {
     public static void main(String[] args) throws InterruptedException, IOException {
         TestClient client = new TestClient();
         client.connect();
+        client.sendMessage(new InitiateSessionRequest(SESSION_ID));
+        Thread.sleep(100L);
         client.sendMessage(client.readMessage());
-        Thread.sleep(10000L);
+        Thread.sleep(2000L);
+        client.sendMessage(new KillSessionRequest(SESSION_ID));
+        Thread.sleep(100L);
         client.close();
     }
 }

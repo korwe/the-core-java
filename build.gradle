@@ -26,6 +26,7 @@ dependencies {
     runtime project(':sessions')
     runtime project(':webcore')
     runtime project(':api')
+    runtime project(':router')
     runtime 'postgresql:postgresql:8.4-702.jdbc4'
     runtime 'org.slf4j:slf4j-log4j12:1.6.1'
 }

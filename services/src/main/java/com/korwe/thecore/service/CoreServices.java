@@ -49,17 +49,17 @@ public class CoreServices {
 
     public static void main(String[] args) {
         CoreConfig.initialize(CoreServices.class.getResourceAsStream("/coreconfig.xml"));
-        final Service sessionManager = new SessionManager();
+//        final Service sessionManager = new SessionManager();
         final Server servletServer = configureServer();
-        final Service webCoreListener = new WebCoreListener();
+//        final Service webCoreListener = new WebCoreListener();
         services.add(new CorePingService());
         services.add(new CoreSyndicationService());
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                sessionManager.stop();
-                webCoreListener.stop();
+                //sessionManager.stop();
+//                webCoreListener.stop();
                 for (Service service: services) {
                     service.stop();
                 }
@@ -73,8 +73,8 @@ public class CoreServices {
             }
         });
 
-        sessionManager.start();
-        webCoreListener.start();
+        //sessionManager.start();
+//        webCoreListener.start();
         for (Service service : services) {
             service.start();
         }

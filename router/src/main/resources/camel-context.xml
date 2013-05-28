@@ -23,7 +23,7 @@
   <bean id="amqp" class="org.apache.camel.component.amqp.AMQPComponent">
     <property name="connectionFactory">
       <bean class="org.apache.qpid.client.AMQConnectionFactory">
-        <property name="connectionURLString" value="amqp://${amqp.user}:${amqp.pass}@${amqp.vhost}?brokerlist='tcp://${amqp.host}:${amqp.port}'"/>
+        <constructor-arg name="url" value="amqp://${amqp.user}:${amqp.pass}@${amqp.vhost}?brokerlist='tcp://${amqp.host}:${amqp.port}'"/>
       </bean>
     </property>
   </bean>

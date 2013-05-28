@@ -1,5 +1,5 @@
 dependencies {
-    compile project(':api')
+    compile project(':common-api')
     compile 'org.apache.camel:camel-core:2.10.4'
     compile 'org.apache.camel:camel-amqp:2.10.4'
     compile 'org.apache.camel:camel-spring:2.10.4'

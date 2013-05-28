@@ -52,8 +52,8 @@ public class CoreServices {
     public static void main(String[] args) {
         CoreConfig.initialize(CoreServices.class.getResourceAsStream("/coreconfig.xml"));
         final Server servletServer = configureServer();
-        services.add(new CorePingService());
-        services.add(new CoreSyndicationService());
+        services.add(new CorePingService(10));
+        services.add(new CoreSyndicationService(new SyndicationServiceImpl(),10));
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override

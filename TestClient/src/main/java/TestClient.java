@@ -1,7 +1,12 @@
+package com.korwe.thecore.testclient;
+
+
 import com.korwe.thecore.api.*;
+
 import com.korwe.thecore.messages.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.thoughtworks.xstream.XStream;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -17,6 +22,7 @@ public class TestClient implements CoreMessageHandler {
     private CoreSubscriber subscriber;
     private CoreSubscriber dataSubscriber;
     private CoreMessageSerializer serializer = new CoreMessageXmlSerializer();
+    private XStream xstream = new XStream();
 
     private static final String MSG_FILE = "/msg.0.xml";
 
@@ -57,6 +63,14 @@ public class TestClient implements CoreMessageHandler {
         return builder.length() > 0 ? serializer.deserialize(builder.toString()) : null;
     }
 
+    private ServiceRequest createRequest() {
+        ServiceRequest req = new ServiceRequest(SESSION_ID, "fetchLatest");
+        req.setChoreography("SyndicationService");
+        req.setParameter("feedUrl", xstream.toXML("http://newsrss.bbc.co.uk/rss/newsonline_world_edition/front_page/rss.xml"));
+        req.setParameter("maxEntries", xstream.toXML(10));
+        return req;
+    }
+
     private void sendMessage(CoreMessage message) {
         log.debug("Sending message: {}", message);
         sender.sendMessage(message);
@@ -72,7 +86,7 @@ public class TestClient implements CoreMessageHandler {
         client.connect();
         client.sendMessage(new InitiateSessionRequest(SESSION_ID));
         Thread.sleep(100L);
-        client.sendMessage(client.readMessage());
+        client.sendMessage(client.createRequest());
         Thread.sleep(2000L);
         client.sendMessage(new KillSessionRequest(SESSION_ID));
         Thread.sleep(100L);

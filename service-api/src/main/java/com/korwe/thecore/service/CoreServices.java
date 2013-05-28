@@ -52,15 +52,16 @@ public class CoreServices {
     public static void main(String[] args) {
         CoreConfig.initialize(CoreServices.class.getResourceAsStream("/coreconfig.xml"));
         final Server servletServer = configureServer();
+        final SessionManager sessionManager = new SessionManager();
         services.add(new CorePingService(10));
         services.add(new CoreSyndicationService(new SyndicationServiceImpl(),10));
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                //sessionManager.stop();
+                sessionManager.stop();
 //                webCoreListener.stop();
-                for (Service service: services) {
+                for (Service service : services) {
                     service.stop();
                 }
 
@@ -73,7 +74,7 @@ public class CoreServices {
             }
         });
 
-        //sessionManager.start();
+        sessionManager.start();
 //        webCoreListener.start();
         for (Service service : services) {
             service.start();

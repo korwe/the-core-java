@@ -28,6 +28,7 @@ import java.util.Map;
  */
 public class ServiceRequest extends CoreRequest {
 
+    private String location;
     private String function = "";
     private Map<String, String> params = new HashMap<String, String>(1);
 
@@ -52,6 +53,14 @@ public class ServiceRequest extends CoreRequest {
         params.put(name, value);
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
@@ -59,6 +68,7 @@ public class ServiceRequest extends CoreRequest {
         sb.append("ServiceRequest");
         sb.append("{function='").append(function).append('\'');
         sb.append(", params=").append(params);
+        sb.append(", location='").append(location).append('\'');
         sb.append('}');
         return sb.toString();
     }

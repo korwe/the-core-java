@@ -61,7 +61,11 @@ public class CoreMessageXmlSerializer implements CoreMessageSerializer {
             switch (message.getMessageType()) {
                 case ServiceRequest:
                     ServiceRequest sreq = (ServiceRequest) message;
-                    builder = builder.up().elem("function").text(sreq.getFunction()).up().elem("parameters");
+                    builder = builder.up().elem("function").text(sreq.getFunction());
+                    if (sreq.getLocation() != null) {
+                        builder = builder.up().elem("location").text(sreq.getLocation());
+                    }
+                    builder = builder.up().elem("parameters");
                     Iterator<String> parameterNames = sreq.getParameterNames();
                     while (parameterNames.hasNext()) {
                         String name = parameterNames.next();
@@ -189,6 +193,10 @@ public class CoreMessageXmlSerializer implements CoreMessageSerializer {
                         if (!pName.isEmpty()) {
                             sreq.setParameter(pName, pValue);
                         }
+                    }
+                    String location = getTagValue(doc, "location");
+                    if (location != null) {
+                        sreq.setLocation(location);
                     }
                     created = sreq;
                     created.setGuid(guid);

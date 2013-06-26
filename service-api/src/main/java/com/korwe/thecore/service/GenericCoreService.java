@@ -68,7 +68,15 @@ public class GenericCoreService<S> extends CorePingService {
                 Object[] params = new Object[paramCount];
                 for (int i = 0; i < paramCount; i++) {
                     String requestParam = request.getParameterValue(paramNames[i]);
-                    params[i] = requestParam == null || requestParam.isEmpty() ? null : getXStream().fromXML(requestParam);
+                    if (requestParam == null || requestParam.isEmpty()) {
+                        if ("location".equals(paramNames[i]) && request.getLocation() != null) {
+                            params[i] = request.getLocation();
+                        }
+                        params[i] = null;
+                    }
+                    else {
+                        params[i] = getXStream().fromXML(requestParam);
+                    }
                 }
                 try {
                     Object returnValue = method.invoke(delegate, params);

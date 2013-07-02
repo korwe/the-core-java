@@ -4,6 +4,8 @@ dependencies {
     compile 'com.jamesmurty.utils:java-xmlbuilder:0.4'
     compile 'com.thoughtworks.xstream:xstream:1.4.4'
     compile 'rome:rome:1.0'
+    compile 'com.google.guava:guava:13.+'
+
 }
 
 jar {

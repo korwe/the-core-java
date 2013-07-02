@@ -2,6 +2,8 @@ package com.korwe.thecore.client;
 
 import com.korwe.thecore.messages.DataResponse;
 import com.korwe.thecore.messages.ServiceResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -10,27 +12,16 @@ import java.util.concurrent.CountDownLatch;
 */
 public class MessageResponse {
     private CountDownLatch latch;
-    private ServiceResult result;
+    private final ServiceResult result;
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public MessageResponse(CountDownLatch latch) {
         this.latch = latch;
         result = new ServiceResult();
     }
 
-    public CountDownLatch getLatch() {
-        return latch;
-    }
-
-    public void setLatch(CountDownLatch latch) {
-        this.latch = latch;
-    }
-
     public ServiceResult getResult() {
         return result;
-    }
-
-    public void setResult(ServiceResult result) {
-        this.result = result;
     }
 
     public ServiceResponse getServiceResponse() {
@@ -38,7 +29,28 @@ public class MessageResponse {
     }
 
     public void setServiceResponse(ServiceResponse serviceResponse) {
-        result.setServiceResponse(serviceResponse);
+        synchronized (result) {
+            result.setServiceResponse(serviceResponse);
+            if (serviceResponse.isSuccessful()) {
+                if (serviceResponse.hasData()) {
+                    if (hasDataResponse()) {
+                        latch.countDown();
+                        log.debug("setServiceResponse: latch countdown: success & has data response");
+                    }
+                    else {
+                        log.debug("setServiceResponse: no latch countdown: success and no data");
+                    }
+                }
+                else {
+                    latch.countDown();
+                    log.debug("setServiceResponse: latch countdown: success & no data expected");
+                }
+            }
+            else {
+                latch.countDown();
+                log.debug("setServiceResponse: latch countdown: unsuccessful");
+            }
+        }
     }
 
     public boolean hasServiceResponse() {
@@ -50,7 +62,16 @@ public class MessageResponse {
     }
 
     public void setDataResponse(DataResponse dataResponse) {
-        result.setDataResponse(dataResponse);
+        synchronized (result) {
+            result.setDataResponse(dataResponse);
+            if (hasServiceResponse()) {
+                log.debug("setDataResponse: latch countdown: has service response");
+                latch.countDown();
+            }
+            else {
+                log.debug("setDataResponse: no latch countdown: no service response");
+            }
+        }
     }
 
     public boolean hasDataResponse() {
@@ -65,7 +86,4 @@ public class MessageResponse {
         return result.getData();
     }
 
-    public void countDown() {
-        latch.countDown();
-    }
 }

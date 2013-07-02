@@ -28,11 +28,10 @@ public abstract class ResponseHandler implements CoreMessageHandler {
 
     @Override
     public void handleMessage(CoreMessage message) {
+        log.info("Message received: {}", message);
         if (messageResponseRegistry.expectsResponse(message.getGuid())) {
+            log.debug("Response expected, handling it");
             handleResponse(message);
-        }
-        else {
-            log.info("Message received: {}", message);
         }
     }
 }

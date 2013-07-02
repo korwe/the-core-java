@@ -1,6 +1,7 @@
 package com.korwe.thecore.client;
 
 import com.google.common.collect.Lists;
+import com.korwe.thecore.api.CoreConfig;
 import com.korwe.thecore.messages.InitiateSessionRequest;
 import com.korwe.thecore.messages.KillSessionRequest;
 import com.korwe.thecore.messages.ServiceRequest;
@@ -29,6 +30,7 @@ public class CoreClient {
 
 
     public CoreClient(String clientId, XStream xStream) {
+        CoreConfig.initialize(this.getClass().getResourceAsStream("/coreconfig.xml"));
         this.clientId = clientId;
         this.xStream = xStream;
         messageResponseRegistry = new MessageResponseRegistry();

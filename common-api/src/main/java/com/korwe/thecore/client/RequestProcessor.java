@@ -2,7 +2,7 @@ package com.korwe.thecore.client;
 
 import com.korwe.thecore.api.CoreSender;
 import com.korwe.thecore.api.MessageQueue;
-import com.korwe.thecore.messages.ServiceRequest;
+import com.korwe.thecore.messages.*;
 
 import java.util.Collection;
 import java.util.Map;
@@ -28,5 +28,13 @@ public class RequestProcessor {
             messageResponseRegistry.registerRequest(serviceRequest.getGuid(), latch);
             coreSender.sendMessage(serviceRequest);
         }
+    }
+
+    public void sendInitiateSession() {
+        coreSender.sendMessage(new InitiateSessionRequest(clientId));
+    }
+
+    public void sendKillSession() {
+        coreSender.sendMessage(new KillSessionRequest(clientId));
     }
 }

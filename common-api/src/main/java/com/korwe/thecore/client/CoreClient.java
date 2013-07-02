@@ -1,8 +1,12 @@
 package com.korwe.thecore.client;
 
 import com.google.common.collect.Lists;
+import com.korwe.thecore.messages.InitiateSessionRequest;
+import com.korwe.thecore.messages.KillSessionRequest;
 import com.korwe.thecore.messages.ServiceRequest;
 import com.thoughtworks.xstream.XStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Map;
@@ -21,18 +25,20 @@ public class CoreClient {
 
     private MessageResponseRegistry messageResponseRegistry;
 
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
 
     public CoreClient(String clientId, XStream xStream) {
         this.clientId = clientId;
         this.xStream = xStream;
         messageResponseRegistry = new MessageResponseRegistry();
         requestProcessor = new RequestProcessor(clientId);
-        serviceResponseHandler = new ServiceResponseHandler(messageResponseRegistry);
-        dataResponseHandler = new DataResponseHandler(messageResponseRegistry, xStream);
+        serviceResponseHandler = new ServiceResponseHandler(clientId, messageResponseRegistry);
+        dataResponseHandler = new DataResponseHandler(clientId, messageResponseRegistry, xStream);
     }
 
     public void initSession() {
-
+        requestProcessor.sendInitiateSession();
     }
 
     public Map<String, ServiceResult> makeRequests(long timeoutMillis, ServiceRequest ... serviceRequests) {
@@ -45,18 +51,20 @@ public class CoreClient {
             requestProcessor.processRequests(serviceRequests, messageResponseRegistry, latch);
             latch.await(timeoutMillis, TimeUnit.MILLISECONDS);
             // Handle timeouts
-            // Handle exceptions
-
+            if (latch.getCount() > 0) {
+                log.error("Latch timed out: {}", latch);
+            }
             return messageResponseRegistry.getResults(serviceRequests);
         }
         catch (InterruptedException e) {
-            e.printStackTrace();
+            // Log and ignore for now
+            log.error("Latch await interrupted: {}", latch);
         }
         return null;
     }
 
     public void closeSession() {
-
+        requestProcessor.sendKillSession();
     }
 
 }

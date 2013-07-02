@@ -28,7 +28,7 @@ public class DataResponseHandler extends ResponseHandler {
     protected void handleResponse(CoreMessage message) {
         log.debug("Handling data response: {}", message.getGuid());
         DataResponse dataResponse = (DataResponse) message;
-        Object data = dataResponse.getData() == null ? null : serializationStrategy.serialize(dataResponse.getData());
+        Object data = dataResponse.getData() == null ? null : serializationStrategy.deserialize(dataResponse.getData());
         messageResponseRegistry.registerDataResponse(dataResponse, data);
     }
 }

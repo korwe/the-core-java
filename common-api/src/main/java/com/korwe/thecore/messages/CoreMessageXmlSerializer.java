@@ -69,8 +69,10 @@ public class CoreMessageXmlSerializer implements CoreMessageSerializer {
                     Iterator<String> parameterNames = sreq.getParameterNames();
                     while (parameterNames.hasNext()) {
                         String name = parameterNames.next();
-                        builder.elem("parameter").elem("name").text(name).up().elem("value")
-                                .text(sreq.getParameterValue(name)).up();
+                        if (sreq.getParameterValue(name) != null) {
+                            builder.elem("parameter").elem("name").text(name).up().elem("value")
+                                    .text(sreq.getParameterValue(name)).up();
+                        }
                     }
                     builder = builder.up();
                     break;

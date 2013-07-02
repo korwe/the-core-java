@@ -22,41 +22,39 @@ public class CoreClient {
     private RequestProcessor requestProcessor;
     private ServiceResponseHandler serviceResponseHandler;
     private DataResponseHandler dataResponseHandler;
-    private XStream xStream;
 
     private MessageResponseRegistry messageResponseRegistry;
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
 
-    public CoreClient(String clientId, XStream xStream) {
+    public CoreClient(String clientId, SerializationStrategy serializationStrategy) {
         CoreConfig.initialize(this.getClass().getResourceAsStream("/coreconfig.xml"));
         this.clientId = clientId;
-        this.xStream = xStream;
         messageResponseRegistry = new MessageResponseRegistry();
-        requestProcessor = new RequestProcessor(clientId);
+        requestProcessor = new RequestProcessor(clientId, serializationStrategy);
         serviceResponseHandler = new ServiceResponseHandler(clientId, messageResponseRegistry);
-        dataResponseHandler = new DataResponseHandler(clientId, messageResponseRegistry, xStream);
+        dataResponseHandler = new DataResponseHandler(clientId, messageResponseRegistry, serializationStrategy);
     }
 
     public void initSession() {
         requestProcessor.sendInitiateSession();
     }
 
-    public Map<String, ServiceResult> makeRequests(long timeoutMillis, ServiceRequest ... serviceRequests) {
-        return makeRequests(timeoutMillis, Lists.newArrayList(serviceRequests));
+    public Map<String, ServiceResult> makeRequests(long timeoutMillis, ClientServiceRequest ... clientServiceRequests) {
+        return makeRequests(timeoutMillis, Lists.newArrayList(clientServiceRequests));
     }
 
-    public Map<String, ServiceResult> makeRequests(long timeoutMillis, Collection<ServiceRequest> serviceRequests) {
-        CountDownLatch latch = new CountDownLatch(serviceRequests.size());
+    public Map<String, ServiceResult> makeRequests(long timeoutMillis, Collection<ClientServiceRequest> clientServiceRequests) {
+        CountDownLatch latch = new CountDownLatch(clientServiceRequests.size());
         try {
-            requestProcessor.processRequests(serviceRequests, messageResponseRegistry, latch);
+            requestProcessor.processRequests(clientServiceRequests, messageResponseRegistry, latch);
             latch.await(timeoutMillis, TimeUnit.MILLISECONDS);
             // Handle timeouts
             if (latch.getCount() > 0) {
                 log.error("Latch timed out: {}", latch);
             }
-            return messageResponseRegistry.getResults(serviceRequests);
+            return messageResponseRegistry.getResults(clientServiceRequests);
         }
         catch (InterruptedException e) {
             // Log and ignore for now

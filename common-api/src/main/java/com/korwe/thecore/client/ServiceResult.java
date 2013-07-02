@@ -35,4 +35,14 @@ public class ServiceResult {
     public void setData(Object data) {
         this.data = data;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("ServiceResult{");
+        sb.append("serviceResponse=").append(serviceResponse);
+        sb.append(", dataResponse=").append(dataResponse);
+        sb.append(", data=").append(data);
+        sb.append('}');
+        return sb.toString();
+    }
 }

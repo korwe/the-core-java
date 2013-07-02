@@ -50,10 +50,10 @@ public class MessageResponseRegistry {
         }
     }
 
-    public Map<String, ServiceResult> getResults(Collection<ServiceRequest> serviceRequests) {
+    public Map<String, ServiceResult> getResults(Iterable<ClientServiceRequest> clientServiceRequests) {
         Map<String, ServiceResult> results = Maps.newHashMap();
-        for (ServiceRequest serviceRequest : serviceRequests) {
-            String guid = serviceRequest.getGuid();
+        for (ClientServiceRequest clientServiceRequest : clientServiceRequests) {
+            String guid = clientServiceRequest.getGuid();
             if (this.expectsResponse(guid)) {
                 MessageResponse messageResponse = registry.remove(guid);
                 results.put(guid, messageResponse.getResult());

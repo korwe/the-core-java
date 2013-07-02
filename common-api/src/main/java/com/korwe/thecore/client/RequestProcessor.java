@@ -14,17 +14,19 @@ import java.util.concurrent.CountDownLatch;
 public class RequestProcessor {
 
     private final String clientId;
+    private final SerializationStrategy serializationStrategy;
     private CoreSender coreSender;
 
-    public RequestProcessor(String clientId) {
+    public RequestProcessor(String clientId, SerializationStrategy serializationStrategy) {
         this.clientId = clientId;
+        this.serializationStrategy = serializationStrategy;
         coreSender = new CoreSender(MessageQueue.ClientToCore);
     }
 
-    public void processRequests(Iterable<ServiceRequest> serviceRequests,
+    public void processRequests(Iterable<ClientServiceRequest> clientServiceRequests,
                                 MessageResponseRegistry messageResponseRegistry, CountDownLatch latch) {
-        for (ServiceRequest serviceRequest : serviceRequests) {
-            serviceRequest.setSessionId(clientId);
+        for (ClientServiceRequest clientServiceRequest : clientServiceRequests) {
+            ServiceRequest serviceRequest = clientServiceRequest.getServiceRequest(clientId, serializationStrategy);
             messageResponseRegistry.registerRequest(serviceRequest.getGuid(), latch);
             coreSender.sendMessage(serviceRequest);
         }

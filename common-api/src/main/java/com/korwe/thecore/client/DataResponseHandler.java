@@ -12,12 +12,14 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
  */
 public class DataResponseHandler extends ResponseHandler {
-    private final XStream xStream;
+    private final SerializationStrategy serializationStrategy;
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    protected DataResponseHandler(String clientId, MessageResponseRegistry messageResponseRegistry, XStream xStream) {
+    protected DataResponseHandler(String clientId, MessageResponseRegistry messageResponseRegistry,
+                                  SerializationStrategy serializationStrategy) {
+
         super(clientId, messageResponseRegistry);
-        this.xStream = xStream;
+        this.serializationStrategy = serializationStrategy;
         coreSubscriber = new CoreSubscriber(MessageQueue.Data, clientId);
         coreSubscriber.connect(this);
     }
@@ -26,7 +28,7 @@ public class DataResponseHandler extends ResponseHandler {
     protected void handleResponse(CoreMessage message) {
         log.debug("Handling data response: {}", message.getGuid());
         DataResponse dataResponse = (DataResponse) message;
-        Object data = dataResponse.getData() == null ? null : xStream.fromXML(dataResponse.getData());
+        Object data = dataResponse.getData() == null ? null : serializationStrategy.serialize(dataResponse.getData());
         messageResponseRegistry.registerDataResponse(dataResponse, data);
     }
 }

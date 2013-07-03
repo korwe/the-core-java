@@ -1,6 +1,7 @@
 package com.korwe.thecore.service;
 
 import com.google.common.collect.ImmutableMap;
+import com.korwe.thecore.annotation.Location;
 import com.korwe.thecore.annotation.ParamNames;
 import com.korwe.thecore.dto.syndication.SyndicationEntry;
 import com.korwe.thecore.exception.CoreException;
@@ -8,14 +9,16 @@ import com.korwe.thecore.exception.CoreSystemException;
 import com.korwe.thecore.messages.ServiceRequest;
 import com.korwe.thecore.service.ping.CorePingService;
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
@@ -64,15 +67,21 @@ public class GenericCoreService<S> extends CorePingService {
             else {
                 Method method = serviceFunction.getMethod();
                 String[] paramNames = serviceFunction.getParamNames();
+                Annotation[][] paramAnnotations = method.getParameterAnnotations();
+
                 int paramCount = paramNames.length;
                 Object[] params = new Object[paramCount];
                 for (int i = 0; i < paramCount; i++) {
                     String requestParam = request.getParameterValue(paramNames[i]);
                     if (requestParam == null || requestParam.isEmpty()) {
-                        if ("location".equals(paramNames[i]) && request.getLocation() != null) {
-                            params[i] = request.getLocation();
+                        for (Annotation annotation :paramAnnotations[i]){
+                            if (Location.class.equals(annotation.annotationType())){
+                                params[i] = request.getLocation();
+                            }
+                            else {
+                                params[i] = null;
+                            }
                         }
-                        params[i] = null;
                     }
                     else {
                         params[i] = getXStream().fromXML(requestParam);

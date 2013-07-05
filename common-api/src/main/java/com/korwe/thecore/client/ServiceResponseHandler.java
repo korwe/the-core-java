@@ -22,7 +22,7 @@ public class ServiceResponseHandler extends ResponseHandler {
 
     @Override
     protected void handleResponse(CoreMessage message) {
-        log.debug("Handling data response: {}", message.getGuid());
+        log.debug("Handling service response: {}", message.getGuid());
         messageResponseRegistry.registerServiceResponse((ServiceResponse) message);
     }
 }

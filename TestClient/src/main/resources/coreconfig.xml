@@ -11,4 +11,5 @@
     <entry key="timeout_seconds">1800</entry>
     <entry key="amqp_user">guest</entry>
     <entry key="session_message_filter">#</entry>
+    <entry key="max_threads">10</entry>
 </properties>

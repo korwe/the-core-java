@@ -7,3 +7,11 @@ dependencies {
     runtime 'org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1'
 
 }
+
+apply plugin: 'application'
+
+mainClassName = 'com.korwe.thecore.router.CamelRouter'
+
+distZip {
+    baseName = 'thecore-router'
+}

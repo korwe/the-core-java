@@ -16,7 +16,3 @@ distZip {
     baseName = 'thecore-router'
 }
 
-task(run, dependsOn: 'compileJava', type: JavaExec, description: 'Will run an instance of The Core Camel Router') {
-    main = 'com.korwe.thecore.router.CamelRouter'
-    classpath = sourceSets.main.runtimeClasspath
-}

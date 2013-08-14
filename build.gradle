@@ -38,3 +38,10 @@ distZip {
     baseName = 'thecore-javaservices'
 }
 
+
+
+task configureQueues(type: Exec) {
+    commandLine file('thecore-queue-config'), 'localhost'
+}
+
+

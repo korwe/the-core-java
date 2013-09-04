@@ -8,3 +8,11 @@ jar {
     baseName = 'thecore-api'
 }
 
+uploadArchives {
+   repositories {
+       mavenDeployer {
+           pom.artifactId = jar.baseName
+       }
+   }
+}
+

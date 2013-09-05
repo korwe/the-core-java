@@ -21,27 +21,29 @@ package com.korwe.thecore.api;
 
 import org.apache.log4j.Logger;
 
-import java.io.InputStream;
+import java.io.FileInputStream;
 import java.util.Properties;
 
 /**
  * @author jacobus
  */
-public class CoreConfig {
+public class CoreConfig extends Properties{
 
     private static final Logger LOG = Logger.getLogger(CoreConfig.class);
 
-    private static CoreConfig config;
+    private static CoreConfig instance;
+    private static String configFilePath = "/coreconfig.xml";
 
-    private Properties prop = new Properties();
 
-    public static void initialize(InputStream configFile) {
-        config = new CoreConfig(configFile);
-    }
-
-    private CoreConfig(InputStream configFile) {
+    private CoreConfig() {
         try {
-            prop.loadFromXML(configFile);
+            LOG.info("Loading config file: "+configFilePath);
+            if(configFilePath.startsWith("file:")){
+                loadFromXML(new FileInputStream(configFilePath.substring(5)));
+            }
+            else{
+                loadFromXML(this.getClass().getResourceAsStream(configFilePath));
+            }
         }
         catch (Exception e) {
             createDefaultSettings();
@@ -49,21 +51,16 @@ public class CoreConfig {
         }
     }
 
-    public static CoreConfig getConfig() {
-        if (null == config) {
-            throw new RuntimeException("Core configuration not initialized");
+    public static synchronized CoreConfig getInstance() {
+        if (null == instance) {
+            instance = new CoreConfig();
         }
-        return config;
+        return instance;
     }
 
-    public String getSetting(String settingName) {
-        return prop.getProperty(settingName);
-    }
-
-    public int getIntSetting(String settingName) {
-        String setting = getSetting(settingName);
+    public int getIntProperty(String settingName) {
         try {
-            return Integer.parseInt(setting);
+            return Integer.parseInt(getProperty(settingName));
         }
         catch (NumberFormatException e) {
             LOG.error("Invalid integer setting for " + settingName, e);
@@ -71,18 +68,24 @@ public class CoreConfig {
         }
     }
 
-    private Properties createDefaultSettings() {
-        Properties prop = new Properties();
-        prop.setProperty("amqp_server", "localhost");
-        prop.setProperty("amqp_port", "5672");
-        prop.setProperty("amqp_vhost", "/");
-        prop.setProperty("amqp_user", "guest");
-        prop.setProperty("amqp_password", "guest");
-        prop.setProperty("session_message_filter", "#");
-        prop.setProperty("processor_type", "com.korwe.thecore.session.BasicMessageProcessor");
-        prop.setProperty("timeout_seconds", "1800");
-        prop.setProperty("scxml_path", "core_session.scxml");
-        prop.setProperty("max_threads", "16");
-        return prop;
+    private void createDefaultSettings() {
+        setProperty("amqp_server", "localhost");
+        setProperty("amqp_port", "5672");
+        setProperty("amqp_vhost", "/");
+        setProperty("amqp_user", "guest");
+        setProperty("amqp_password", "guest");
+        setProperty("session_message_filter", "#");
+        setProperty("processor_type", "com.korwe.thecore.session.BasicMessageProcessor");
+        setProperty("timeout_seconds", "1800");
+        setProperty("scxml_path", "core_session.scxml");
+        setProperty("max_threads", "16");
+    }
+
+    public static String getConfigFilePath() {
+        return configFilePath;
+    }
+
+    public static void setConfigFilePath(String newConfigFilePath) {
+        configFilePath = newConfigFilePath;
     }
 }

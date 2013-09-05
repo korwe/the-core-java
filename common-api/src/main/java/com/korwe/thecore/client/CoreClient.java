@@ -29,7 +29,7 @@ public class CoreClient {
 
 
     public CoreClient(String clientId, SerializationStrategy serializationStrategy) {
-        CoreConfig.initialize(this.getClass().getResourceAsStream("/coreconfig.xml"));
+        CoreConfig.setConfigFilePath(".");
         this.clientId = clientId;
         messageResponseRegistry = new MessageResponseRegistry();
         requestProcessor = new RequestProcessor(clientId, serializationStrategy);

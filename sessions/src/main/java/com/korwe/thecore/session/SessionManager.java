@@ -51,11 +51,11 @@ public class SessionManager extends AbstractExecutionThreadService implements Co
     }
 
     public SessionManager() {
-        processorType = CoreConfig.getConfig().getSetting("processor_type");
-        subscriber = new CoreSubscriber(MessageQueue.CoreToSession, CoreConfig.getConfig().getSetting("session_message_filter"));
+        processorType = CoreConfig.getInstance().getProperty("processor_type");
+        subscriber = new CoreSubscriber(MessageQueue.CoreToSession, CoreConfig.getInstance().getProperty("session_message_filter"));
         clientSender = new CoreSender(MessageQueue.CoreToClient);
         serviceSender = new CoreSender(MessageQueue.CoreToService);
-        maxThreads = CoreConfig.getConfig().getIntSetting("max_threads");
+        maxThreads = CoreConfig.getInstance().getIntProperty("max_threads");
     }
 
     @Override
@@ -145,7 +145,7 @@ public class SessionManager extends AbstractExecutionThreadService implements Co
             processor.setClientSender(clientSender);
             processor.setServiceSender(serviceSender);
             CoreSession session = new CoreSession(sessionId, processor,
-                                                  CoreConfig.getConfig().getIntSetting("timeout_seconds"), clientSender,
+                                                  CoreConfig.getInstance().getIntProperty("timeout_seconds"), clientSender,
                                                   serviceSender);
             sessions.put(sessionId, session);
             response = new InitiateSessionResponse(sessionId, message.getGuid(), true);

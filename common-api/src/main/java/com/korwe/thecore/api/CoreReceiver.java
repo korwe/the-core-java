@@ -47,10 +47,10 @@ public class CoreReceiver implements SessionListener {
     public void connect(CoreMessageHandler handler) {
         this.handler = handler;
         connection = new Connection();
-        CoreConfig config = CoreConfig.getConfig();
-        connection.connect(config.getSetting("amqp_server"), config.getIntSetting("amqp_port"),
-                           config.getSetting("amqp_vhost"), config.getSetting("amqp_user"),
-                           config.getSetting("amqp_password"));
+        CoreConfig config = CoreConfig.getInstance();
+        connection.connect(config.getProperty("amqp_server"), config.getIntProperty("amqp_port"),
+                           config.getProperty("amqp_vhost"), config.getProperty("amqp_user"),
+                           config.getProperty("amqp_password"));
         session = connection.createSession();
         session.setSessionListener(this);
         queueName = getQueueName(queue);

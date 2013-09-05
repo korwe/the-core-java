@@ -50,7 +50,6 @@ public class CoreServices {
     private static Set<Service> services = new HashSet<Service>(5);
 
     public static void main(String[] args) {
-        CoreConfig.initialize(CoreServices.class.getResourceAsStream("/coreconfig.xml"));
         final Server servletServer = configureServer();
         final SessionManager sessionManager = new SessionManager();
         services.add(new CorePingService(10));

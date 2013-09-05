@@ -27,7 +27,6 @@ public class TestClient implements CoreMessageHandler {
     private static final String MSG_FILE = "/msg.0.xml";
 
     private void connect() {
-        CoreConfig.initialize(this.getClass().getResourceAsStream("/coreconfig.xml"));
         sender = new CoreSender(MessageQueue.ClientToCore);
         subscriber = new CoreSubscriber(MessageQueue.CoreToClient, SESSION_ID);
         subscriber.connect(this);

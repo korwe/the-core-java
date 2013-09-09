@@ -41,7 +41,9 @@ distZip {
 
 
 task configureQueues(type: Exec) {
-    commandLine file('thecore-queue-config'), 'localhost'
+    Properties properties = new Properties()
+    properties.loadFromXML(new FileInputStream('coreconfig.xml'))
+    commandLine file('thecore-queue-config'), properties.getProperty('amqp_host', 'localhost'), Integer.parseInt(properties.getProperty('amqp_port', '5672'))
 }
 
 

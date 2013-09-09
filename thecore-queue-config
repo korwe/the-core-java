@@ -1,11 +1,12 @@
 #!/bin/sh
 HOST=$1
+PORT=$2
 
-qpid-config -a $HOST add exchange direct core.direct --durable
-qpid-config -a $HOST add exchange topic core.topic --durable
-qpid-config -a $HOST add queue core.client-core --durable
-qpid-config -a $HOST add queue core.service-core --durable
-qpid-config -a $HOST add queue core.trace --durable
-qpid-config -a $HOST bind core.direct core.client-core core.client-core
-qpid-config -a $HOST bind core.direct core.service-core core.service-core
-qpid-config -a $HOST bind core.direct core.trace core.trace
+qpid-config -a $HOST -p $PORT add exchange direct core.direct --durable
+qpid-config -a $HOST -p $PORT add exchange topic core.topic --durable
+qpid-config -a $HOST -p $PORT add queue core.client-core --durable
+qpid-config -a $HOST -p $PORT add queue core.service-core --durable
+qpid-config -a $HOST -p $PORT add queue core.trace --durable
+qpid-config -a $HOST -p $PORT bind core.direct core.client-core core.client-core
+qpid-config -a $HOST -p $PORT bind core.direct core.service-core core.service-core
+qpid-config -a $HOST -p $PORT bind core.direct core.trace core.trace

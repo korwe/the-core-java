@@ -19,16 +19,17 @@
 
 package com.korwe.thecore.api;
 
-import org.apache.log4j.Logger;
 import org.apache.qpid.transport.Option;
 import org.apache.qpid.transport.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
  */
 public class CoreSubscriber extends CoreReceiver {
 
-    private static final Logger LOG = Logger.getLogger(CoreSubscriber.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CoreSubscriber.class);
 
     private final String filter;
 

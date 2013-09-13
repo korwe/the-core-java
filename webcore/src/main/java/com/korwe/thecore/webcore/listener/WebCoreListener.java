@@ -28,7 +28,8 @@ import com.korwe.thecore.messages.CoreMessage;
 import com.korwe.thecore.messages.CoreMessageSerializer;
 import com.korwe.thecore.messages.CoreMessageXmlSerializer;
 import com.korwe.thecore.webcore.DataSourceProvider;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -39,7 +40,7 @@ import java.sql.SQLException;
  */
 public class WebCoreListener extends AbstractIdleService implements CoreMessageHandler {
 
-    private static final Logger LOG = Logger.getLogger(WebCoreListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WebCoreListener.class);
     private static final String WEBCORE = "webcore.";
     private static final String FILTER = WEBCORE + "#";
 

@@ -22,15 +22,17 @@ package com.korwe.thecore.api;
 import com.korwe.thecore.messages.CoreMessage;
 import com.korwe.thecore.messages.CoreMessageSerializer;
 import com.korwe.thecore.messages.CoreMessageXmlSerializer;
-import org.apache.log4j.Logger;
+
 import org.apache.qpid.transport.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
  */
 public class CoreReceiver implements SessionListener {
 
-    private static final Logger LOG = Logger.getLogger(CoreReceiver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CoreReceiver.class);
 
     private final MessageQueue queue;
     private Connection connection;

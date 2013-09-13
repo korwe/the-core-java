@@ -28,7 +28,8 @@ import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -42,7 +43,7 @@ import java.util.List;
  */
 public class SyndicationServiceImpl extends PingServiceImpl implements SyndicationService {
 
-    private static final Logger LOG = Logger.getLogger(SyndicationService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SyndicationService.class);
 
     @Override
     public SyndicationFeed fetchLatest(String feedUrl, int maxEntries) {

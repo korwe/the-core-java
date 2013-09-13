@@ -31,7 +31,8 @@ import com.korwe.thecore.messages.CoreMessage;
 import com.korwe.thecore.messages.CoreMessageSerializer;
 import com.korwe.thecore.messages.CoreMessageXmlSerializer;
 import com.korwe.thecore.webcore.DataSourceProvider;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -49,7 +50,7 @@ import java.util.List;
 @Singleton
 public class WebCoreServlet extends HttpServlet {
 
-    private static final Logger LOG = Logger.getLogger(WebCoreServlet.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WebCoreServlet.class);
 
     private static final String FETCH_MESSAGE_SQL =
             "SELECT message " +
@@ -92,7 +93,7 @@ public class WebCoreServlet extends HttpServlet {
                 resp.getWriter().println("error: no matching message received");
             }
             else {
-                LOG.debug(messages);
+                LOG.debug(Joiner.on("\n").join(messages));
                 resp.setContentType("text/xml");
                 resp.getWriter().println(Joiner.on("\r\n").join(messages));
             }

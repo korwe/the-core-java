@@ -23,7 +23,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContextEvent;
 
@@ -32,7 +33,7 @@ import javax.servlet.ServletContextEvent;
  */
 public class GuiceServletConfig extends GuiceServletContextListener {
 
-    private static final Logger LOG = Logger.getLogger(GuiceServletConfig.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GuiceServletConfig.class);
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {

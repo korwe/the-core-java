@@ -20,18 +20,19 @@
 package com.korwe.thecore.webcore;
 
 import com.jolbox.bonecp.BoneCPDataSource;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DataSourceProvider  {
 
-    private static final Logger LOG = Logger.getLogger(DataSourceProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DataSourceProvider.class);
 
     public static BoneCPDataSource createDataSource() {
         try {
             Class.forName("org.postgresql.Driver");
         }
         catch (ClassNotFoundException e) {
-            LOG.fatal(e);
+            LOG.error("No postgres driver", e);
         }
         BoneCPDataSource ds = new BoneCPDataSource();
         ds.setJdbcUrl("jdbc:postgresql://localhost:5432/webcore");

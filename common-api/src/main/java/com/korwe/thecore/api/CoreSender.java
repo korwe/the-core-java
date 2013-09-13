@@ -22,8 +22,9 @@ package com.korwe.thecore.api;
 import com.korwe.thecore.messages.CoreMessage;
 import com.korwe.thecore.messages.CoreMessageSerializer;
 import com.korwe.thecore.messages.CoreMessageXmlSerializer;
-import org.apache.log4j.Logger;
 import org.apache.qpid.transport.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +34,7 @@ import java.util.Map;
  */
 public class CoreSender {
 
-    private static final Logger LOG = Logger.getLogger(CoreSender.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CoreSender.class);
 
     private final MessageQueue queue;
     private Connection connection;

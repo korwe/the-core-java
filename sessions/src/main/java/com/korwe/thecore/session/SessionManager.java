@@ -22,7 +22,8 @@ package com.korwe.thecore.session;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
 import com.korwe.thecore.api.*;
 import com.korwe.thecore.messages.*;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -35,7 +36,7 @@ import java.util.concurrent.Executors;
  */
 public class SessionManager extends AbstractExecutionThreadService implements CoreMessageHandler {
 
-    private static final Logger LOG = Logger.getLogger(SessionManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SessionManager.class);
 
     private static Map<String, CoreSession> sessions = new ConcurrentHashMap<String, CoreSession>(128, 2.0f, 8);
 

@@ -33,7 +33,8 @@ import org.apache.commons.scxml.env.jexl.JexlEvaluator;
 import org.apache.commons.scxml.io.SCXMLParser;
 import org.apache.commons.scxml.model.ModelException;
 import org.apache.commons.scxml.model.SCXML;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 
 import java.io.BufferedReader;
@@ -45,7 +46,7 @@ import java.io.FileReader;
  */
 public class ScxmlMessageProcessor extends BasicMessageProcessor implements CoreMessageProcessor {
 
-    private static final Logger LOG = Logger.getLogger(ScxmlMessageProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ScxmlMessageProcessor.class);
 
     private SCXML scxml;
     private SCXMLExecutor exec;

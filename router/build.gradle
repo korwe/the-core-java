@@ -12,7 +12,14 @@ apply plugin: 'application'
 
 mainClassName = 'com.korwe.thecore.router.CamelRouter'
 
+
 distZip {
     baseName = 'thecore-router'
 }
+
+startScripts{
+    optsEnvironmentVar = 'CORE_ROUTER_OPTS'
+}
+
+
 

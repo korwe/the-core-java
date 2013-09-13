@@ -29,7 +29,8 @@ import com.korwe.thecore.session.SessionManager;
 import org.apache.commons.scxml.SCInstance;
 import org.apache.commons.scxml.TriggerEvent;
 import org.apache.commons.scxml.model.ModelException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -38,7 +39,7 @@ import java.util.Map;
  */
 public class ScxmlMessageSender implements Runnable {
 
-    private static final Logger LOG = Logger.getLogger(ScxmlMessageSender.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ScxmlMessageSender.class);
 
     private final String method;
     private Map params;

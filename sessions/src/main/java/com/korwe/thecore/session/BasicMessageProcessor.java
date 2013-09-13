@@ -20,16 +20,16 @@
 package com.korwe.thecore.session;
 
 import com.korwe.thecore.api.CoreSender;
-import com.korwe.thecore.api.MessageQueue;
 import com.korwe.thecore.messages.CoreMessage;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
  */
 public class BasicMessageProcessor implements CoreMessageProcessor {
 
-    private static final Logger LOG = Logger.getLogger(BasicMessageProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BasicMessageProcessor.class);
 
     private String sessionId;
     private CoreSender clientSender;

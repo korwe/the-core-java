@@ -21,21 +21,19 @@ package com.korwe.thecore.service;
 
 import com.google.common.util.concurrent.Service;
 import com.google.inject.servlet.GuiceFilter;
-import com.korwe.thecore.api.CoreConfig;
 import com.korwe.thecore.service.ping.CorePingService;
-import com.korwe.thecore.service.ping.PingServiceImpl;
 import com.korwe.thecore.service.syndication.CoreSyndicationService;
 import com.korwe.thecore.service.syndication.SyndicationServiceImpl;
 import com.korwe.thecore.session.SessionManager;
-import com.korwe.thecore.webcore.listener.WebCoreListener;
 import com.korwe.thecore.webcore.servlet.GuiceServletConfig;
-import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.thread.ExecutorThreadPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -45,7 +43,7 @@ import java.util.Set;
  */
 public class CoreServices {
 
-    private static final Logger LOG = Logger.getLogger(CoreServices.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CoreServices.class);
 
     private static Set<Service> services = new HashSet<Service>(5);
 
@@ -68,7 +66,7 @@ public class CoreServices {
                     servletServer.stop();
                 }
                 catch (Exception e) {
-                    LOG.error(e);
+                    LOG.error("Could not stop servletServer", e);
                 }
             }
         });
@@ -84,7 +82,7 @@ public class CoreServices {
             servletServer.join();
         }
         catch (Exception e) {
-            LOG.error(e);
+            LOG.error("Could not start servletServer", e);
         }
     }
 

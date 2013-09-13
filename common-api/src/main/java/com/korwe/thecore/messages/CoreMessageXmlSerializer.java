@@ -20,7 +20,8 @@
 package com.korwe.thecore.messages;
 
 import com.jamesmurty.utils.XMLBuilder;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -44,7 +45,7 @@ import java.util.Properties;
  * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
  */
 public class CoreMessageXmlSerializer implements CoreMessageSerializer {
-    private static final Logger LOG = Logger.getLogger(CoreMessageXmlSerializer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CoreMessageXmlSerializer.class);
 
     private static final String TIMESTAMP_FORMAT = "yyyyMMdd'T'HHmmss.SSS";
 

@@ -23,7 +23,8 @@ import org.apache.commons.scxml.SCInstance;
 import org.apache.commons.scxml.TriggerEvent;
 import org.apache.commons.scxml.invoke.Invoker;
 import org.apache.commons.scxml.invoke.InvokerException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -32,7 +33,7 @@ import java.util.Map;
  */
 public class SendCoreMessageInvoker implements Invoker {
 
-    private static final Logger LOG = Logger.getLogger(SendCoreMessageInvoker.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SendCoreMessageInvoker.class);
 
     private String parentStateId;
     private SCInstance scInstance;

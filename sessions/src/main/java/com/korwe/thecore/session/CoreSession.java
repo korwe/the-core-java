@@ -24,7 +24,8 @@ import com.korwe.thecore.api.CoreMessageHandler;
 import com.korwe.thecore.api.CoreSender;
 import com.korwe.thecore.api.MessageQueue;
 import com.korwe.thecore.messages.CoreMessage;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CoreSession implements CoreMessageHandler {
 
-    private static final Logger LOG = Logger.getLogger(CoreSession.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CoreSession.class);
 
     private String sessionId;
     private long timeoutMillis;

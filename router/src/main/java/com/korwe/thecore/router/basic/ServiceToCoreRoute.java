@@ -15,10 +15,14 @@ public class ServiceToCoreRoute extends SpringRouteBuilder {
     public void configure() throws Exception {
         from(String.format("%s%s//%s?%s", AmqpUriPart.DirectPrefix.getValue(), MessageQueue.DIRECT_EXCHANGE,
                            MessageQueue.ServiceToCore.getQueueName(), AmqpUriPart.Options.getValue()))
-                .recipientList(simple(String.format("%s%s/%s.${in.header.sessionId}//?%s",
+                .recipientList(simple(String.format("%s%s/%s.${in.header.sessionId}//?%s,%s%s//%s?%s",
                                                     AmqpUriPart.TopicPrefix.getValue(),
                                                     MessageQueue.TOPIC_EXCHANGE,
                                                     MessageQueue.CoreToClient.getQueueName(),
+                                                    AmqpUriPart.Options.getValue(),
+                                                    AmqpUriPart.DirectPrefix.getValue(),
+                                                    MessageQueue.DIRECT_EXCHANGE,
+                                                    MessageQueue.Trace.getQueueName(),
                                                     AmqpUriPart.Options.getValue())));
     }
 

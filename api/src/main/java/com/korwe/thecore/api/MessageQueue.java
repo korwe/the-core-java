@@ -28,7 +28,8 @@ public enum MessageQueue {
     ServiceToCore("core.service-core", true),
     CoreToClient("core.core-client", false),
     CoreToSession("core.core-session", false),
-    Data("core.data", false);
+    Data("core.data", false),
+    Trace("core.trace", true);
 
     public static final String DIRECT_EXCHANGE = "core.direct";
     public static final String TOPIC_EXCHANGE = "core.topic";

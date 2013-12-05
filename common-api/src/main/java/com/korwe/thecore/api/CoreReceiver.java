@@ -34,15 +34,14 @@ public class CoreReceiver implements SessionListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(CoreReceiver.class);
 
-    private final MessageQueue queue;
     private Connection connection;
     private CoreMessageSerializer serializer;
     private Session session;
     private CoreMessageHandler handler;
-    private String queueName;
+    private final String queueName;
 
     public CoreReceiver(MessageQueue queue) {
-        this.queue = queue;
+        queueName = getQueueName(queue);
         serializer = new CoreMessageXmlSerializer();
     }
 
@@ -55,7 +54,6 @@ public class CoreReceiver implements SessionListener {
                            config.getProperty("amqp_password"));
         session = connection.createSession();
         session.setSessionListener(this);
-        queueName = getQueueName(queue);
         bindToQueue(queueName, session);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Connected and waiting for messages");

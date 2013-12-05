@@ -35,10 +35,10 @@ public class CoreReceiver implements SessionListener {
     private static final Logger LOG = LoggerFactory.getLogger(CoreReceiver.class);
 
     private Connection connection;
-    private CoreMessageSerializer serializer;
+    protected CoreMessageSerializer serializer;
     private Session session;
     private CoreMessageHandler handler;
-    private final String queueName;
+    protected final String queueName;
 
     public CoreReceiver(MessageQueue queue) {
         queueName = getQueueName(queue);

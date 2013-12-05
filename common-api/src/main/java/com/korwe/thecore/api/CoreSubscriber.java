@@ -34,8 +34,8 @@ public class CoreSubscriber extends CoreReceiver {
     private final String filter;
 
     public CoreSubscriber(MessageQueue queue, String filter) {
-        super(queue);
         this.filter = filter;
+        this.queueName = getQueueName(queue);
     }
 
     @Override

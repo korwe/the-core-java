@@ -55,6 +55,10 @@ public class GenericCoreService<S> extends CorePingService {
         return serviceName;
     }
 
+    public Class getServiceClass(){
+        return serviceClass;
+    }
+
     @Override
     protected void handleServiceRequest(ServiceRequest request) {
         String requestFunction = request.getFunction();

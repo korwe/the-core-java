@@ -21,9 +21,13 @@ public class ClientToCoreRoute extends SpringRouteBuilder {
                            MessageQueue.ClientToCore.getQueueName(), AmqpUriPart.Options.getValue()))
             .choice()
                 .when(header("messageType").isEqualTo(CoreMessage.MessageType.ServiceRequest.name()))
-                    .recipientList(simple(String.format("%s%s/%s.${in.header.choreography}//?%s",
+                    .recipientList(simple(String.format("%s%s/%s.${in.header.choreography}//?%s,%s%s//%s?%s",
                                                         AmqpUriPart.TopicPrefix.getValue(), MessageQueue.TOPIC_EXCHANGE,
                                                         MessageQueue.CoreToService.getQueueName(),
+                                                        AmqpUriPart.Options.getValue(),
+                                                        AmqpUriPart.DirectPrefix.getValue(),
+                                                        MessageQueue.DIRECT_EXCHANGE,
+                                                        MessageQueue.Trace.getQueueName(),
                                                         AmqpUriPart.Options.getValue()))).end()
                 .when(header("messageType").isEqualTo(CoreMessage.MessageType.InitiateSessionRequest.name()))
                     .process(new SessionResponseProcessor() {

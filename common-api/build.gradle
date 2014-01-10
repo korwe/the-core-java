@@ -19,3 +19,14 @@ uploadArchives {
         }
     }
 }
+
+apply plugin: 'maven-publish'
+publishing{
+
+    publications {
+        mavenJava(MavenPublication){
+            artifactId  jar.baseName
+            from components.java
+        }
+    }
+}

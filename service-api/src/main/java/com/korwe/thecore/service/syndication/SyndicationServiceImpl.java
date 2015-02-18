@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -50,9 +51,12 @@ public class SyndicationServiceImpl extends PingServiceImpl implements Syndicati
         try {
             LOG.info("fetching feed url "+feedUrl);
             LOG.info("fetching "+maxEntries+ "entries");
-            URL url = new URL(feedUrl);
+            URLConnection urlConnection = new URL(feedUrl).openConnection();
+            urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+
+
             SyndFeedInput input = new SyndFeedInput();
-            SyndFeed feed = input.build(new XmlReader(url));
+            SyndFeed feed = input.build(new XmlReader(urlConnection));
             List entries = feed.getEntries();
 
 

@@ -19,14 +19,25 @@
 
 package com.korwe.thecore.messages;
 
+import com.korwe.thecore.exception.ErrorType;
+
 /**
  * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
  */
 public class CoreResponse extends CoreMessage {
 
     private boolean successful;
+    private ErrorType errorType;
     private String errorCode = "";
     private String errorMessage = "";
+
+    public ErrorType getErrorType() {
+        return errorType;
+    }
+
+    public void setErrorType(ErrorType errorType) {
+        this.errorType = errorType;
+    }
 
     public String getErrorCode() {
         return errorCode;
@@ -63,6 +74,9 @@ public class CoreResponse extends CoreMessage {
         final StringBuilder sb = new StringBuilder();
         sb.append("CoreResponse{");
         sb.append(super.toString());
+        if(errorType!=null){
+            sb.append("errorType=").append(errorType.getErrorCode());
+        }
         sb.append("errorCode='").append(errorCode).append('\'');
         sb.append(", successful=").append(successful);
         sb.append(", errorMessage='").append(errorMessage).append('\'');

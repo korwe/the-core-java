@@ -20,6 +20,7 @@
 package com.korwe.thecore.messages;
 
 import com.jamesmurty.utils.XMLBuilder;
+import com.korwe.thecore.exception.ErrorType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -111,9 +112,14 @@ public class CoreMessageXmlSerializer implements CoreMessageSerializer {
     }
 
     private XMLBuilder addResponseElements(XMLBuilder builder, CoreResponse response) {
-        return builder.up().elem("errorCode").text(response.getErrorCode()).up()
+        if(response.getErrorType()!=null){
+            builder.up().elem("errorType").text(String.valueOf(response.getErrorType().getErrorCode()));
+        }
+
+        builder = builder.up().elem("errorCode").text(response.getErrorCode()).up()
                 .elem("errorMessage").text(response.getErrorMessage()).up()
                 .elem("successful").text(response.isSuccessful() ? "1" : "0").up();
+        return builder;
     }
 
     @Override
@@ -268,6 +274,10 @@ public class CoreMessageXmlSerializer implements CoreMessageSerializer {
     private void setResponseFields(CoreResponse response, Document doc) {
         response.setErrorCode(getTagValue(doc, "errorCode"));
         response.setErrorMessage(getTagValue(doc, "errorMessage"));
+        String errorType = getTagValue(doc, "errorType");
+        if(!"".equals(errorType)){
+            response.setErrorType(ErrorType.fromErrorCode(Integer.valueOf(errorType)));
+        }
     }
 
     private String getTagValue(Document doc, String tagName) {

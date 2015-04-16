@@ -88,7 +88,7 @@ public class GenericCoreService<S> extends CorePingService {
                         }
                     }
                     else {
-                        params[i] = getXStream().fromXML(requestParam);
+                        params[i] =  getXStream().fromXML(requestParam);
                     }
                 }
                 try {

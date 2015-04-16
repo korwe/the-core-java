@@ -6,6 +6,7 @@ import com.korwe.thecore.api.CoreMessageHandler;
 import com.korwe.thecore.api.CoreSender;
 import com.korwe.thecore.api.CoreSubscriber;
 import com.korwe.thecore.api.MessageQueue;
+import com.korwe.thecore.exception.ErrorType;
 import com.korwe.thecore.messages.CoreMessage;
 import com.korwe.thecore.messages.DataResponse;
 import com.korwe.thecore.messages.ServiceRequest;
@@ -73,6 +74,7 @@ public abstract class AbstractCoreService extends AbstractIdleService implements
     protected void handleBadMessageType(CoreMessage message) {
         LOG.error(BAD_MESSAGE_TYPE);
         ServiceResponse response = new ServiceResponse(message.getSessionId(), message.getGuid(), false, false);
+        response.setErrorType(ErrorType.System);
         response.setErrorCode(ERRORCODE_BAD_MESSAGE_TYPE);
         response.setErrorMessage(BAD_MESSAGE_TYPE);
         sendResponse(response);
@@ -81,6 +83,7 @@ public abstract class AbstractCoreService extends AbstractIdleService implements
     protected void handleBadRequest(ServiceRequest request) {
         LOG.error(BAD_SERVICE);
         ServiceResponse response = new ServiceResponse(request.getSessionId(), request.getGuid(), false, false);
+        response.setErrorType(ErrorType.System);
         response.setErrorCode(ERRORCODE_BAD_SERVICE);
         response.setErrorMessage(BAD_SERVICE);
         sendResponse(response);
@@ -91,6 +94,7 @@ public abstract class AbstractCoreService extends AbstractIdleService implements
     protected void handleUnsupportedFunctionRequest(ServiceRequest request) {
         LOG.error(BAD_FUNCTION + request.getFunction());
         ServiceResponse response = new ServiceResponse(request.getSessionId(), request.getGuid(), false, false);
+        response.setErrorType(ErrorType.System);
         response.setErrorCode(ERRORCODE_BAD_FUNCTION);
         response.setErrorMessage(BAD_FUNCTION + request.getFunction());
         sendResponse(response);
@@ -98,6 +102,7 @@ public abstract class AbstractCoreService extends AbstractIdleService implements
 
     protected void sendErrorResponse(ServiceRequest request, CoreException exception) {
         ServiceResponse response = new ServiceResponse(request.getSessionId(), request.getGuid(), false, false);
+        response.setErrorType(exception.getErrorType());
         response.setErrorCode(exception.getErrorCode());
         response.setErrorMessage(Joiner.on('|').join(exception.getErrorVars()));
         sendResponse(response);

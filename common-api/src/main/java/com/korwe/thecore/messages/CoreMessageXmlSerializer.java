@@ -113,7 +113,15 @@ public class CoreMessageXmlSerializer implements CoreMessageSerializer {
 
     private XMLBuilder addResponseElements(XMLBuilder builder, CoreResponse response) {
         if(response.getErrorType()!=null){
-            builder.up().elem("errorType").text(String.valueOf(response.getErrorType().getErrorCode()));
+            builder = builder.up().elem("errorType").text(String.valueOf(response.getErrorType().getErrorCode()));
+        }
+
+        if(response.getErrorVars()!=null && response.getErrorVars().size() >0){
+            builder = builder.up().elem("errorVars");
+            for(String var : response.getErrorVars()){
+                builder = builder.elem("errorVar").text(var).up();
+            }
+            builder = builder.up();
         }
 
         builder = builder.up().elem("errorCode").text(response.getErrorCode()).up()
@@ -278,6 +286,12 @@ public class CoreMessageXmlSerializer implements CoreMessageSerializer {
         if(!"".equals(errorType)){
             response.setErrorType(ErrorType.fromErrorCode(Integer.valueOf(errorType)));
         }
+
+        NodeList errorVars = doc.getElementsByTagName("errorVar");
+        for (int i = 0; i < errorVars.getLength(); i++) {
+            response.getErrorVars().add(errorVars.item(i).getTextContent());
+        }
+
     }
 
     private String getTagValue(Document doc, String tagName) {

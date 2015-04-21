@@ -1,6 +1,7 @@
 package com.korwe.thecore.service;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AbstractIdleService;
 import com.korwe.thecore.api.CoreMessageHandler;
 import com.korwe.thecore.api.CoreSender;
@@ -17,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -105,6 +107,7 @@ public abstract class AbstractCoreService extends AbstractIdleService implements
         response.setErrorType(exception.getErrorType());
         response.setErrorCode(exception.getErrorCode());
         response.setErrorMessage(Joiner.on('|').join(exception.getErrorVars()));
+        response.setErrorVars(Lists.newArrayList(exception.getErrorVars()));
         sendResponse(response);
     }
 

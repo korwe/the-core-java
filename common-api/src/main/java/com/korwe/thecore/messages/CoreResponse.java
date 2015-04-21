@@ -21,6 +21,10 @@ package com.korwe.thecore.messages;
 
 import com.korwe.thecore.exception.ErrorType;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
  */
@@ -30,6 +34,7 @@ public class CoreResponse extends CoreMessage {
     private ErrorType errorType;
     private String errorCode = "";
     private String errorMessage = "";
+    private List<String> errorVars = new ArrayList<String>();
 
     public ErrorType getErrorType() {
         return errorType;
@@ -63,6 +68,14 @@ public class CoreResponse extends CoreMessage {
         this.successful = successful;
     }
 
+    public List<String> getErrorVars() {
+        return errorVars;
+    }
+
+    public void setErrorVars(List<String> errorVars) {
+        this.errorVars = errorVars;
+    }
+
     protected CoreResponse(String sessionId, MessageType messageType, String guid, boolean successful) {
         super(sessionId, messageType);
         this.successful = successful;
@@ -75,11 +88,24 @@ public class CoreResponse extends CoreMessage {
         sb.append("CoreResponse{");
         sb.append(super.toString());
         if(errorType!=null){
-            sb.append("errorType=").append(errorType.getErrorCode());
+            sb.append(" errorType=").append(errorType.getErrorCode());
         }
-        sb.append("errorCode='").append(errorCode).append('\'');
+        sb.append(", errorCode='").append(errorCode).append('\'');
         sb.append(", successful=").append(successful);
         sb.append(", errorMessage='").append(errorMessage).append('\'');
+        if (errorVars.size() > 0){
+            sb.append(", errorVars='");
+            Iterator<String> varsIterator = errorVars.iterator();
+            String var;
+            while (varsIterator.hasNext()){
+                var = varsIterator.next();
+                sb.append(var);
+                if(varsIterator.hasNext()){
+                    sb.append(", ");
+                }
+            }
+            sb.append('\'');
+        }
         sb.append('}');
         return sb.toString();
     }

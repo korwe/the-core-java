@@ -21,4 +21,10 @@ public class CoreServiceException extends CoreException {
         super(serviceInterface.getName()+"."+errorCode, errorVars);
         setErrorType(ErrorType.Service);
     }
+
+
+    public CoreServiceException(Class<? extends PingService> serviceInterface, Throwable cause, String errorCode, String... errorVars) {
+        super(cause, serviceInterface.getName()+"."+errorCode, errorVars);
+        setErrorType(ErrorType.Service);
+    }
 }

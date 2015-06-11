@@ -1,9 +1,7 @@
 package com.korwe.thecore.service;
 
 import com.google.common.collect.ImmutableMap;
-import com.korwe.thecore.annotation.Location;
 import com.korwe.thecore.annotation.ParamNames;
-import com.korwe.thecore.dto.syndication.SyndicationEntry;
 import com.korwe.thecore.exception.CoreException;
 import com.korwe.thecore.exception.CoreSystemException;
 import com.korwe.thecore.messages.ServiceRequest;
@@ -12,12 +10,10 @@ import com.thoughtworks.xstream.XStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -30,18 +26,15 @@ public class GenericCoreService<S> extends CorePingService {
     private Logger log = LoggerFactory.getLogger(this.getClass());
     private Class<S> serviceClass;
     private String serviceName;
+    protected ParameterProcessor parameterProcessor;
 
 
     @SuppressWarnings("unchecked")
     public GenericCoreService(S delegate, String serviceName, int maxThreads) {
-        super(maxThreads);
-        this.delegate = delegate;
-        this.serviceName = serviceName;
-        this.serviceClass = (Class<S>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-        this.functions = createFunctionMap();
+        this(delegate, serviceName, maxThreads, null);
     }
 
-
+    @SuppressWarnings("unchecked")
     public GenericCoreService(S delegate, String serviceName, int maxThreads, XStream xStream) {
         super(maxThreads, xStream);
         this.delegate = delegate;
@@ -70,27 +63,7 @@ public class GenericCoreService<S> extends CorePingService {
             }
             else {
                 Method method = serviceFunction.getMethod();
-                String[] paramNames = serviceFunction.getParamNames();
-                Annotation[][] paramAnnotations = method.getParameterAnnotations();
-
-                int paramCount = paramNames.length;
-                Object[] params = new Object[paramCount];
-                for (int i = 0; i < paramCount; i++) {
-                    String requestParam = request.getParameterValue(paramNames[i]);
-                    if (requestParam == null || requestParam.isEmpty()) {
-                        for (Annotation annotation :paramAnnotations[i]){
-                            if (Location.class.equals(annotation.annotationType())){
-                                params[i] = request.getLocation();
-                            }
-                            else {
-                                params[i] = null;
-                            }
-                        }
-                    }
-                    else {
-                        params[i] =  getXStream().fromXML(requestParam);
-                    }
-                }
+                Object[] params = parameterProcessor.extractParameters(request, serviceFunction, method);
                 try {
                     Object returnValue = method.invoke(delegate, params);
                     sendSuccessResponse(request, method.getReturnType(), returnValue);
@@ -114,6 +87,12 @@ public class GenericCoreService<S> extends CorePingService {
         }
     }
 
+    @Override protected void startUp() throws Exception {
+        super.startUp();
+        this.parameterProcessor = new ParameterProcessor(new MatchingParameterHandler(getXStream()),
+                                                         new LocationParameterHandler());
+    }
+
     private void sendSuccessResponse(ServiceRequest request, Class returnType, Object returnValue) {
         if (Void.TYPE.equals(returnType)) {
             sendSuccessResponse(request);
@@ -135,7 +114,7 @@ public class GenericCoreService<S> extends CorePingService {
         return builder.build();
     }
 
-    private static class ServiceFunction {
+    public static class ServiceFunction {
 
         private String name;
         private Method method;
@@ -191,21 +170,6 @@ public class GenericCoreService<S> extends CorePingService {
             return result;
         }
 
-        public static void main(String[] args){
-            XStream xStream = new XStream();
-            Map map = new HashMap();
-            map.put("a",10);
-            map.put("b", 20);
-            map.put("c", 30);
-            map.put("d", 50);
-            map.put("e", 60);
-            SyndicationEntry syndicationEntry = new SyndicationEntry();
-            syndicationEntry.setTitle("hi");
-            syndicationEntry.setLink("hi");
-            map.put("f", syndicationEntry);
-            System.out.println(xStream.toXML(map));
-            System.out.println(xStream.toXML(syndicationEntry));
-        }
     }
 
 }

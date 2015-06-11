@@ -7,18 +7,16 @@ import com.korwe.thecore.api.CoreMessageHandler;
 import com.korwe.thecore.api.CoreSender;
 import com.korwe.thecore.api.CoreSubscriber;
 import com.korwe.thecore.api.MessageQueue;
+import com.korwe.thecore.exception.CoreException;
 import com.korwe.thecore.exception.ErrorType;
 import com.korwe.thecore.messages.CoreMessage;
 import com.korwe.thecore.messages.DataResponse;
 import com.korwe.thecore.messages.ServiceRequest;
 import com.korwe.thecore.messages.ServiceResponse;
-import com.korwe.thecore.exception.CoreException;
 import com.thoughtworks.xstream.XStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -44,13 +42,12 @@ public abstract class AbstractCoreService extends AbstractIdleService implements
     private int maxThreads = 10;
 
     protected AbstractCoreService(int maxThreads) {
-        if (maxThreads > 0) this.maxThreads = maxThreads;
-        this.xStream = new XStream();
+        this(maxThreads, null);
     }
 
     protected AbstractCoreService(int maxThreads, XStream xStream) {
         if (maxThreads > 0) this.maxThreads = maxThreads;
-        this.xStream = xStream;
+        this.xStream = xStream == null ? new XStream() : xStream;
     }
 
     @Override

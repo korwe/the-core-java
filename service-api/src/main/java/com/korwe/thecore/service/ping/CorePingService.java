@@ -61,7 +61,7 @@ public class CorePingService extends AbstractCoreService implements CoreMessageH
     }
 
     protected void handlePingRequest(ServiceRequest request) {
-        boolean pingResult = pingService != null ? pingService.ping() : true;
+        boolean pingResult = pingService == null || pingService.ping();
         ServiceResponse pingResponse = new ServiceResponse(request.getSessionId(), request.getGuid(), pingResult, true);
         sendResponse(pingResponse);
         String resultData = "<pingResult>" + pingResult + "</pingResult>";

@@ -27,7 +27,7 @@ import java.util.concurrent.Executors;
 public abstract class AbstractCoreService extends AbstractIdleService implements CoreMessageHandler {
 
     private static final String ERRORCODE_BAD_MESSAGE_TYPE = "system.protocol.badMessageType" ;
-    private static final String ERRORCODE_BAD_SERVICE = "system..badService" ;
+    private static final String ERRORCODE_BAD_SERVICE = "system.badService" ;
     private static final String ERRORCODE_BAD_FUNCTION = "system.bus.badFunction" ;
     private static final String BAD_MESSAGE_TYPE = "Message is not a service request";
     private static final String BAD_SERVICE = "The request is not for this service";

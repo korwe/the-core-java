@@ -1,6 +1,7 @@
 package com.korwe.thecore.exception;
 
-import com.korwe.thecore.exception.ErrorType;
+
+import com.google.common.base.Joiner;
 
 /**
  * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
@@ -20,28 +21,35 @@ public abstract class CoreException extends RuntimeException {
     }
 
     public CoreException(String errorCode, String... errorVars) {
-        super();
+        super(codeWithVars(errorCode, errorVars));
         this.errorCode = errorCode;
         this.errorVars = errorVars;
     }
 
     public CoreException(String errorCode, Object... errorVars) {
-        super();
+        super(codeWithVars(errorCode, errorVars));
         this.errorCode = errorCode;
         this.errorVars = stringify(errorVars);
     }
 
 
     public CoreException(Throwable cause, String errorCode, String... errorVars) {
-        super(cause);
+        super(codeWithVars(errorCode, errorVars), cause);
         this.errorCode = errorCode;
         this.errorVars = errorVars;
     }
 
     public CoreException(Throwable cause, String errorCode, Object... errorVars) {
-        super(cause);
+        super(codeWithVars(errorCode, errorVars), cause);
         this.errorCode = errorCode;
         this.errorVars = stringify(errorVars);
+    }
+
+    private static String codeWithVars(String errorCode, Object... errorVars){
+        return errorCode.concat("{")
+                .concat(Joiner.on(",").join(errorVars))
+                .concat("}");
+
     }
 
     public String getErrorCode() {

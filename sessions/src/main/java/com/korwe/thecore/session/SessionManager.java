@@ -32,7 +32,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
+ * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 public class SessionManager extends AbstractExecutionThreadService implements CoreMessageHandler {
 

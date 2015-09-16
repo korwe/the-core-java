@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
+ * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 public class MessageResponseRegistry {
 

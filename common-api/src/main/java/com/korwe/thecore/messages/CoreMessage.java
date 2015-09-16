@@ -22,7 +22,7 @@ package com.korwe.thecore.messages;
 import java.util.Date;
 
 /**
- * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
+ * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 public abstract class CoreMessage {
 

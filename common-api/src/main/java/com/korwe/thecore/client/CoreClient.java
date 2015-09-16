@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 
 /**
- * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
+ * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 public class CoreClient {
 

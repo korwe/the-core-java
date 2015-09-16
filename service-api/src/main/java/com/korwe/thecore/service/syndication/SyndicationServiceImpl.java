@@ -40,7 +40,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
+ * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 public class SyndicationServiceImpl extends PingServiceImpl implements SyndicationService {
 

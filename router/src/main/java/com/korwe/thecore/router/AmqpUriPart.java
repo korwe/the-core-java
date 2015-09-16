@@ -1,7 +1,7 @@
 package com.korwe.thecore.router;
 
 /**
- * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
+ * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 public enum AmqpUriPart {
     DirectPrefix("amqp:queue:BURL:direct://"),

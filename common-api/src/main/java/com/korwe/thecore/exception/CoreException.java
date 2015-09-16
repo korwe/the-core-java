@@ -4,7 +4,7 @@ package com.korwe.thecore.exception;
 import com.google.common.base.Joiner;
 
 /**
- * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
+ * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 
 public abstract class CoreException extends RuntimeException {

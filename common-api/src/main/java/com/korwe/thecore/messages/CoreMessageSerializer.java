@@ -20,7 +20,7 @@
 package com.korwe.thecore.messages;
 
 /**
- * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
+ * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 public interface CoreMessageSerializer {
     public String serialize(CoreMessage message);

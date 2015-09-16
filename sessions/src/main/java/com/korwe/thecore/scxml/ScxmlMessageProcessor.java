@@ -42,7 +42,7 @@ import java.io.File;
 import java.io.FileReader;
 
 /**
- * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
+ * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 public class ScxmlMessageProcessor extends BasicMessageProcessor implements CoreMessageProcessor {
 

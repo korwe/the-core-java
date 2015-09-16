@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @author <a href="mailto:dario.matonicki@korwe.com>Dario Matonicki</a>
+ * @author <a href="mailto:dario.matonicki@korwe.com">Dario Matonicki</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)

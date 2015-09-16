@@ -1,7 +1,18 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.3.1'
+    }
+}
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
+
 dependencies {
     compile project(':common-api')
     compile 'commons-scxml:commons-scxml:0.9'
-    compile 'com.google.guava:guava:13.+'
+    compile 'com.google.guava:guava:13.0.1'
     compile 'com.google.inject:guice:3.0'
 }
 
@@ -9,10 +20,8 @@ jar {
     baseName = 'thecore-sessionmanager'
 }
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            pom.artifactId = jar.baseName
-        }
-    }
+ext {
+    pkgName = 'The Core Java Session Manager'
 }
+
+apply from: "${project.rootDir}/scripts/publish.gradle"

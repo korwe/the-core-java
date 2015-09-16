@@ -28,7 +28,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
+ * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 public class SyndicationServiceImplTest {
 

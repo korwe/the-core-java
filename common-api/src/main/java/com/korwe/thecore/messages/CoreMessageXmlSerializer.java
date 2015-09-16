@@ -43,7 +43,7 @@ import java.util.Iterator;
 import java.util.Properties;
 
 /**
- * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
+ * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 public class CoreMessageXmlSerializer implements CoreMessageSerializer {
     private static final Logger LOG = LoggerFactory.getLogger(CoreMessageXmlSerializer.class);

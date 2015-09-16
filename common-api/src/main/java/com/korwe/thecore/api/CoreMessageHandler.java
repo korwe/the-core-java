@@ -22,7 +22,7 @@ package com.korwe.thecore.api;
 import com.korwe.thecore.messages.CoreMessage;
 
 /**
- * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
+ * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 public interface CoreMessageHandler {
 

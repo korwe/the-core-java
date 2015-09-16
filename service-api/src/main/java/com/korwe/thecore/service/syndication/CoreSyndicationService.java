@@ -23,7 +23,7 @@ import com.korwe.thecore.service.GenericCoreService;
 import com.korwe.thecore.service.SyndicationService;
 
 /**
- * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
+ * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 public class CoreSyndicationService extends GenericCoreService<SyndicationService> {
     public CoreSyndicationService(SyndicationService syndicationService, int maxThreads){

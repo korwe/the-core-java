@@ -10,7 +10,7 @@ import org.apache.camel.spring.SpringRouteBuilder;
 import org.springframework.stereotype.Component;
 
 /**
- * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
+ * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 @Component
 public class ClientToCoreRoute extends SpringRouteBuilder {

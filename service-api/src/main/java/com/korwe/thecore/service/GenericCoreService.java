@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 /**
- * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
+ * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 public class GenericCoreService<S> extends CorePingService {
 

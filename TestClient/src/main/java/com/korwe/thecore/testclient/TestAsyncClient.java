@@ -7,7 +7,7 @@ import com.thoughtworks.xstream.XStream;
 import java.util.Map;
 
 /**
- * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
+ * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 public class TestAsyncClient {
 

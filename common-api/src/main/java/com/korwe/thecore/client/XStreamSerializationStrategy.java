@@ -3,7 +3,7 @@ package com.korwe.thecore.client;
 import com.thoughtworks.xstream.XStream;
 
 /**
- * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
+ * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 public class XStreamSerializationStrategy implements SerializationStrategy {
 

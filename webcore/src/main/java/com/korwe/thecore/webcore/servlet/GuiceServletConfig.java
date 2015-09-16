@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletContextEvent;
 
 /**
- * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
+ * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 public class GuiceServletConfig extends GuiceServletContextListener {
 

@@ -1,7 +1,7 @@
 package com.korwe.thecore.exception;
 
 /**
- * @author <a href="mailto:tjad.clark@korwe.com>Tjad Clark</a>
+ * @author <a href="mailto:tjad.clark@korwe.com">Tjad Clark</a>
  */
 public enum ErrorType {
     System(1001),

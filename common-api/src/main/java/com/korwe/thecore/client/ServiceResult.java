@@ -4,7 +4,7 @@ import com.korwe.thecore.messages.DataResponse;
 import com.korwe.thecore.messages.ServiceResponse;
 
 /**
- * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
+ * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 public class ServiceResult {
 

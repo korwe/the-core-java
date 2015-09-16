@@ -1,7 +1,7 @@
 package com.korwe.thecore.client;
 
 /**
- * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
+ * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 public interface SerializationStrategy {
 

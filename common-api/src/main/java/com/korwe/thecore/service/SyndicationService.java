@@ -26,7 +26,7 @@ import com.korwe.thecore.dto.syndication.SyndicationFeed;
 import java.util.List;
 
 /**
- * @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
+ * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 public interface SyndicationService extends PingService {
     public static final String serviceName = "SyndicationService";

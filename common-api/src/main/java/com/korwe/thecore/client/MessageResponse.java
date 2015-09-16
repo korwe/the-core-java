@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.CountDownLatch;
 
 /**
-* @author <a href="mailto:nithia.govender@korwe.com>Nithia Govender</a>
+* @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
 */
 public class MessageResponse {
     private CountDownLatch latch;

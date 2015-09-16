@@ -1,8 +1,19 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.3.1'
+    }
+}
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
+
 dependencies {
     compile project(':common-api')
     compile project(':sessions')
     compile project(':webcore')
-    compile 'org.eclipse.jetty:jetty-servlet:7.3.1+'
+    compile 'org.eclipse.jetty:jetty-servlet:7.3.1.v20110307'
     compile 'rome:rome:1.0'
 }
 
@@ -10,21 +21,8 @@ jar {
     baseName = 'thecore-service-api'
 }
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            pom.artifactId = jar.baseName
-        }
-    }
+ext {
+    pkgName = 'The Core Java Service API'
 }
 
-apply plugin: 'maven-publish'
-publishing{
-
-    publications {
-        mavenJava(MavenPublication){
-            artifactId  jar.baseName
-            from components.java
-        }
-    }
-}
+apply from: "${project.rootDir}/scripts/publish.gradle"

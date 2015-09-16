@@ -7,9 +7,24 @@ allprojects {
     group = 'com.korwe'
     version = '2.0.0'
 
+    ext {
+        siteUrl = 'https://github.com/korwe/the-core-java'
+        gitUrl = 'https://github.com/korwe/the-core-java.git'
+    }
+
+    task sourceJar(type: Jar) {
+        from sourceSets.main.allJava
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        from 'build/docs/javadoc'
+    }
+
+
     repositories {
         mavenLocal()
         mavenCentral()
+        jcenter()
     }
 
     dependencies {

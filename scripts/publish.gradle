@@ -1,0 +1,86 @@
+publishing {
+
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId jar.baseName
+            from components.java
+
+            artifact sourceJar {
+                classifier 'sources'
+            }
+
+            artifact javadocJar {
+                classifier = 'javadoc'
+            }
+
+            pom.withXml {
+                asNode().get('version') + {
+                    resolveStrategy = Closure.DELEGATE_FIRST
+
+                    name pkgName
+                    description 'The Core marshals data from asynchronous or distributed services so that this data can be staged, filtered and personalised for mobile clients.'
+                    url siteUrl
+
+                    licenses {
+                        license {
+                            name 'GNU Lesser General Public Licence, Version 3'
+                            url 'http://www.gnu.org/licenses/lgpl-3.0.txt'
+                        }
+                    }
+
+                    organization {
+                        name 'Korwe Software'
+                        url 'http://korwe.com'
+                    }
+
+                    developers {
+                        developer {
+                            id 'nithiag'
+                            name 'Nithia Govender'
+                        }
+                        developer {
+                            id 'tjadc'
+                            name 'Tjad Clark'
+                        }
+                        developer {
+                            id 'dariom'
+                            name 'Dario Matonicki'
+                        }
+                    }
+                    scm {
+                        connection gitUrl
+                        developerConnection gitUrl
+                        url siteUrl
+
+                    }
+
+                }
+            }
+        }
+    }
+}
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+    publications = ['mavenJava']
+    pkg {
+        repo = 'korwe-oss'
+        name = jar.baseName
+        userOrg = 'korwe'
+        licenses = ['LGPL-3.0']
+        vcsUrl = gitUrl
+        publicDownloadNumbers = true
+        publish = true
+        version {
+            name = project.version
+            desc = pkgName
+            vcsTag = project.version
+            mavenCentralSync {
+                user = project.hasProperty('sonatypeUser') ? project.property('sonatypeUser') : System.getenv('SONATYPE_USER')
+                password = project.hasProperty('sonatypePassword') ? project.property('sonatypePassword') : System.getenv('SONATYPE_PASSWORD')
+            }
+        }
+
+    }
+}

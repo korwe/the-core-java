@@ -1,11 +1,8 @@
 package com.korwe.thecore.client;
 
 import com.google.common.collect.Lists;
-import com.korwe.thecore.api.CoreConfig;
-import com.korwe.thecore.messages.InitiateSessionRequest;
-import com.korwe.thecore.messages.KillSessionRequest;
-import com.korwe.thecore.messages.ServiceRequest;
-import com.thoughtworks.xstream.XStream;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +24,7 @@ public class CoreClient {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
+    private ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
 
     public CoreClient(String clientId, SerializationStrategy serializationStrategy) {
   //      CoreConfig.setConfigFilePath(".");

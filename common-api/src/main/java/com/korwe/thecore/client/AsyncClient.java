@@ -8,4 +8,5 @@ import java.util.function.Function;
 public interface AsyncClient<C> {
     public C async();
     public C async(Function callback);
+    public C withTimeout(Long timeout);
 }

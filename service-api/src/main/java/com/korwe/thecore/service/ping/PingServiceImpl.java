@@ -19,10 +19,12 @@
 
 package com.korwe.thecore.service.ping;
 
+import com.korwe.thecore.service.AbstractServiceImpl;
+
 /**
  * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
-public class PingServiceImpl implements com.korwe.thecore.service.PingService {
+public class PingServiceImpl extends AbstractServiceImpl implements com.korwe.thecore.service.PingService {
 
     @Override
     public boolean ping() {

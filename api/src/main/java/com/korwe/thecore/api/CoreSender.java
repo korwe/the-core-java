@@ -35,10 +35,15 @@ public class CoreSender {
 
     private static final Logger LOG = Logger.getLogger(CoreSender.class);
 
-    private final MessageQueue queue;
-    private Connection connection;
-    private CoreMessageSerializer serializer;
-    private final Session session;
+    protected MessageQueue queue;
+    protected Connection connection;
+    protected CoreMessageSerializer serializer;
+    protected Session session;
+
+    protected CoreSender() {
+
+    }
+
 
     public CoreSender(MessageQueue queue) {
         this.queue = queue;
@@ -48,8 +53,8 @@ public class CoreSender {
             LOG.info("Connecting to queue server " + config.getSetting("amqp_server"));
         }
         connection.connect(config.getSetting("amqp_server"), config.getIntSetting("amqp_port"),
-                           config.getSetting("amqp_vhost"), config.getSetting("amqp_user"),
-                           config.getSetting("amqp_password"));
+                config.getSetting("amqp_vhost"), config.getSetting("amqp_user"),
+                config.getSetting("amqp_password"));
         if (LOG.isInfoEnabled()) {
             LOG.info("Connected");
         }
@@ -107,7 +112,7 @@ public class CoreSender {
         appHeaders.put("messageType", message.getMessageType().name());
         msgProps.setApplicationHeaders(appHeaders);
         session.messageTransfer(destination, MessageAcceptMode.EXPLICIT, MessageAcquireMode.PRE_ACQUIRED,
-                                new Header(props, msgProps), serialized);
+                new Header(props, msgProps), serialized);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sent: " + serialized);
         }

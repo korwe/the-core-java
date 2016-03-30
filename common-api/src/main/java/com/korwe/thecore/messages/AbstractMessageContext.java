@@ -8,14 +8,14 @@ import org.slf4j.LoggerFactory;
 /**
  * @author <a href="mailto:tjad.clark@korwe.com">Tjad Clark</a>
  */
-public abstract class AbstractMessageContext<S extends AbstractServiceClient>{
+public abstract class AbstractMessageContext<SC extends AbstractServiceClient, S>{
 
     private Logger log = LoggerFactory.getLogger(AbstractMessageContext.class);
 
-    protected S delegate;
+    protected SC delegate;
     protected long timeout = 3000L;
 
-    public AbstractMessageContext(S cAbstractServiceClient) {
+    public AbstractMessageContext(SC cAbstractServiceClient) {
         this.delegate = cAbstractServiceClient;
     }
 
@@ -32,13 +32,14 @@ public abstract class AbstractMessageContext<S extends AbstractServiceClient>{
         return false;
     }
 
-    public void reset(){
+    public S reset(){
         this.timeout = 3000L;
+        return (S)this;
     }
 
-    public AbstractMessageContext withTimeout(Long timeout){
+    public S withTimeout(Long timeout){
         log.debug("Setting timeout to: {} ms", timeout);
         this.timeout = timeout;
-        return this;
+        return (S)this;
     }
 }

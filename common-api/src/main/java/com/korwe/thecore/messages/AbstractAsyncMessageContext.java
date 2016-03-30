@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author <a href="mailto:tjad.clark@korwe.com">Tjad Clark</a>
  */
-public class AbstractAsyncMessageContext<SC extends AbstractServiceClient> extends AbstractMessageContext<SC> implements AsyncMessage{
+public class AbstractAsyncMessageContext<SC extends AbstractServiceClient, S> extends AbstractMessageContext<SC, S> implements AsyncMessage{
 
     private static long ASYNC_TIMEOUT = 300000L;
     private Logger log = LoggerFactory.getLogger(AbstractAsyncMessageContext.class);
@@ -37,14 +37,14 @@ public class AbstractAsyncMessageContext<SC extends AbstractServiceClient> exten
     }
 
     @Override
-    public AbstractMessageContext async(){
+    public S async(){
         this.isAsync = true;
         log.debug("In async mode");
         return withTimeout(ASYNC_TIMEOUT);
     }
 
     @Override
-    public AbstractMessageContext async(java.util.function.Function callback) {
+    public S async(java.util.function.Function callback) {
         this.isAsync = true;
 
         this.callback = new FutureCallback() {
@@ -65,9 +65,10 @@ public class AbstractAsyncMessageContext<SC extends AbstractServiceClient> exten
     }
 
     @Override
-    public void reset(){
+    public S reset(){
         super.reset();
         this.callback = null;
         this.isAsync = false;
+        return (S)this;
     }
 }

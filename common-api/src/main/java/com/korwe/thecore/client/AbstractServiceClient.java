@@ -3,12 +3,15 @@ package com.korwe.thecore.client;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.util.concurrent.*;
+import com.korwe.thecore.exception.CoreClientException;
 import com.korwe.thecore.exception.CoreServiceException;
 import com.korwe.thecore.messages.AbstractAsyncMessageContext;
 import com.korwe.thecore.messages.AbstractMessageContext;
 import com.korwe.thecore.messages.ServiceResponse;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,12 +27,16 @@ public abstract class AbstractServiceClient<MC extends AbstractAsyncMessageConte
 
     private Logger logger = LoggerFactory.getLogger(AbstractServiceClient.class);
     private Class serviceClass;
+    protected Class<MC> msgCtxClass;
+    protected Class serviceClientClass;
     private CoreClient coreClient;
     private ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
 
     public AbstractServiceClient(CoreClient coreClient, Class serviceClass) {
         this.coreClient = coreClient;
         this.serviceClass = serviceClass;
+        this.msgCtxClass = (Class<MC>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        this.serviceClientClass = (Class) ((ParameterizedType) msgCtxClass.getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
 
@@ -126,8 +133,11 @@ public abstract class AbstractServiceClient<MC extends AbstractAsyncMessageConte
     }
 
     public MC newContext(){
-        AbstractMessageContext mc = new AbstractMessageContext(this) {};
-
-        return (MC)mc;
+        try {
+            return msgCtxClass.getConstructor(serviceClientClass).newInstance(this);
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            logger.error("Could not instantiate class[{}]", msgCtxClass.getName(), e);
+            throw new CoreClientException("messageContext.instantiate.fail", msgCtxClass.getName());
+        }
     }
 }

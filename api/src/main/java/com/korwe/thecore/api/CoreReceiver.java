@@ -55,8 +55,8 @@ public class CoreReceiver implements SessionListener {
         session.setSessionListener(this);
         queueName = getQueueName(queue);
         bindToQueue(queueName, session);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Connected and waiting for messages");
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Connected and waiting for messages: " + queueName);
         }
 
     }
@@ -82,7 +82,7 @@ public class CoreReceiver implements SessionListener {
     @Override
     public void closed(Session session) {
         if (LOG.isInfoEnabled()) {
-            LOG.info("Session listener closed");
+            LOG.info("Session listener closed: " + queueName);
         }
     }
 
@@ -107,6 +107,10 @@ public class CoreReceiver implements SessionListener {
         String msgText = messageTransfer.getBodyString();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Received: " + msgText);
+        }
+        else {
+            int endIndex = msgText.indexOf("</choreo");
+            LOG.info("Received: " + msgText.substring(0, endIndex > 0 ? endIndex : 350));
         }
         CoreMessage message = serializer.deserialize(msgText);
         handler.handleMessage(message);

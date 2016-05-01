@@ -39,8 +39,8 @@ public class CoreSubscriber extends CoreReceiver {
 
     @Override
     protected void bindToQueue(String queueName, Session session) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Binding to topic " + queueName);
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Binding to topic " + queueName);
         }
 
         session.queueDeclare(queueName, null, null, Option.AUTO_DELETE);

@@ -13,7 +13,7 @@ apply plugin: 'maven-publish'
 dependencies {
     compile 'log4j:log4j:1.2.16'
     compile 'org.apache.qpid:qpid-client:0.12'
-    compile 'com.jamesmurty.utils:java-xmlbuilder:0.4'
+    compile 'com.jamesmurty.utils:java-xmlbuilder:1.1'
     compile 'com.thoughtworks.xstream:xstream:1.4.8'
     compile 'rome:rome:1.0'
     compile 'com.google.guava:guava:13.0.1'

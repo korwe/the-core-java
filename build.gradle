@@ -41,8 +41,6 @@ mainClassName = 'com.korwe.thecore.service.CoreServices'
 
 dependencies {
     runtime project(':service-api')
-    runtime project(':sessions')
-    runtime project(':webcore')
     runtime project(':common-api')
     runtime project(':router')
     runtime 'postgresql:postgresql:8.4-702.jdbc4'

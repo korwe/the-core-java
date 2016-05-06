@@ -19,24 +19,17 @@
 
 package com.korwe.thecore.service;
 
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.Service;
-import com.google.inject.servlet.GuiceFilter;
 import com.korwe.thecore.service.ping.CorePingService;
 import com.korwe.thecore.service.syndication.CoreSyndicationService;
 import com.korwe.thecore.service.syndication.SyndicationServiceImpl;
-import com.korwe.thecore.session.SessionManager;
-import com.korwe.thecore.webcore.servlet.GuiceServletConfig;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
-import org.eclipse.jetty.servlet.DefaultServlet;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.util.thread.ExecutorThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
@@ -45,58 +38,71 @@ public class CoreServices {
 
     private static final Logger LOG = LoggerFactory.getLogger(CoreServices.class);
 
-    private static Set<Service> services = new HashSet<Service>(5);
+    private static Set<AbstractCoreService> services = new HashSet<>(5);
 
     public static void main(String[] args) {
-        final Server servletServer = configureServer();
-        final SessionManager sessionManager = new SessionManager();
         services.add(new CorePingService(10));
         services.add(new CoreSyndicationService(new SyndicationServiceImpl(),10));
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                sessionManager.stop();
-//                webCoreListener.stop();
-                for (Service service : services) {
-                    service.stop();
-                }
-
-                try {
-                    servletServer.stop();
-                }
-                catch (Exception e) {
-                    LOG.error("Could not stop servletServer", e);
-                }
+                services.forEach(Service::stop);
             }
         });
 
-        sessionManager.start();
-//        webCoreListener.start();
-        for (Service service : services) {
+        CountDownLatch serviceLatch = new CountDownLatch(services.size());
+
+        for (AbstractCoreService service : services) {
+            service.addListener(new ServiceListener(serviceLatch, service.getServiceName()), MoreExecutors.sameThreadExecutor());
             service.start();
         }
 
-        try {
-            servletServer.start();
-            servletServer.join();
-        }
-        catch (Exception e) {
-            LOG.error("Could not start servletServer", e);
+        while (serviceLatch.getCount() > 0) {
+            try {
+                serviceLatch.await();
+            }
+            catch (InterruptedException e) {
+                LOG.info("Await interrupted, retrying");
+            }
         }
     }
 
-    private static Server configureServer() {
-        Server server = new Server();
-        Connector connector = new SelectChannelConnector();
-        connector.setHost("0.0.0.0");
-        connector.setPort(8090);
-        server.setConnectors(new Connector[] {connector});
-        ServletContextHandler contextHandler = new ServletContextHandler(server, "/", ServletContextHandler.NO_SESSIONS);
-        contextHandler.addFilter(GuiceFilter.class, "/*", 0);
-        contextHandler.addEventListener(new GuiceServletConfig());
-        contextHandler.addServlet(DefaultServlet.class, "/");
-        server.setThreadPool(new ExecutorThreadPool());
-        return server;
+    private static class ServiceListener implements Service.Listener {
+
+        private final CountDownLatch serviceLatch;
+        private final String serviceName;
+
+        ServiceListener(final CountDownLatch serviceLatch, final String serviceName) {
+            this.serviceLatch = serviceLatch;
+            this.serviceName = serviceName;
+        }
+
+        @Override
+        public void starting() {
+            LOG.info("Service {} starting", serviceName);
+        }
+
+        @Override
+        public void running() {
+            LOG.info("Service {} running", serviceName);
+        }
+
+        @Override
+        public void stopping(final Service.State from) {
+            LOG.info("Service {} stopping", serviceName);
+        }
+
+        @Override
+        public void terminated(final Service.State from) {
+            serviceLatch.countDown();
+            LOG.info("Service {} stopped, latch counted down: {}", serviceName, serviceLatch.getCount());
+        }
+
+        @Override
+        public void failed(final Service.State from, final Throwable failure) {
+            serviceLatch.countDown();
+            LOG.info("Service {} failed, latch counted down: {}", serviceName, serviceLatch.getCount());
+        }
     }
 }

@@ -1,0 +1,10 @@
+
+dependencies {
+    compile project(':common-api')
+    compile 'rome:rome:1.0'
+}
+
+jar {
+    baseName = 'thecore-sample-service-shared'
+}
+

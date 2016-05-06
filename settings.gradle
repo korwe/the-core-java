@@ -1,1 +1,1 @@
-include 'common-api', 'service-api', 'router'
+include 'common-api', 'service-api', 'router', 'sample-service-shared', 'sample-service'

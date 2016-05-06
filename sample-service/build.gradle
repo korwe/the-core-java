@@ -1,0 +1,21 @@
+apply plugin: 'application'
+
+mainClassName = 'com.korwe.thecore.service.CoreServices'
+
+dependencies {
+    compile project(':common-api')
+    compile project(':service-api')
+    compile project(':sample-service-shared')
+    compile 'rome:rome:1.0'
+    runtime 'org.postgresql:postgresql:9.4.1208'
+    runtime 'org.slf4j:slf4j-log4j12:1.7.21'
+}
+
+jar {
+    baseName = 'thecore-service-sample'
+}
+
+distZip {
+    baseName = 'thecore-service-sample'
+}
+

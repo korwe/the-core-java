@@ -28,7 +28,8 @@ allprojects {
     }
 
     dependencies {
-        testCompile 'junit:junit:4.10'
+        compile 'org.slf4j:slf4j-api:1.7.21'
+        testCompile 'junit:junit:4.12'
     }
 
     test {

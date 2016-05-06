@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>TheCore config file</comment>
+    <entry key="amqp_server">localhost</entry>
+    <entry key="amqp_port">5672</entry>
+    <entry key="amqp_vhost">/</entry>
+    <entry key="amqp_password">guest</entry>
+    <entry key="processor_type">com.korwe.thecore.session.BasicMessageProcessor</entry>
+    <entry key="scxml_path">core_session.scxml</entry>
+    <entry key="timeout_seconds">1800</entry>
+    <entry key="amqp_user">guest</entry>
+    <entry key="session_message_filter">#</entry>
+    <entry key="max_threads">10</entry>
+</properties>

@@ -16,7 +16,7 @@ dependencies {
     compile 'com.jamesmurty.utils:java-xmlbuilder:1.1'
     compile 'com.thoughtworks.xstream:xstream:1.4.8'
     compile 'rome:rome:1.0'
-    compile 'com.google.guava:guava:13.0.1'
+    compile 'com.google.guava:guava:19.0'
 
 }
 

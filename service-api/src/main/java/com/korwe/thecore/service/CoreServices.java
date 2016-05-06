@@ -21,6 +21,7 @@ package com.korwe.thecore.service;
 
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.Service;
+import com.google.common.util.concurrent.ServiceManager;
 import com.korwe.thecore.service.ping.CorePingService;
 import com.korwe.thecore.service.syndication.CoreSyndicationService;
 import com.korwe.thecore.service.syndication.SyndicationServiceImpl;
@@ -30,6 +31,8 @@ import org.slf4j.LoggerFactory;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
@@ -42,67 +45,40 @@ public class CoreServices {
 
     public static void main(String[] args) {
         services.add(new CorePingService(10));
-        services.add(new CoreSyndicationService(new SyndicationServiceImpl(),10));
+        services.add(new CoreSyndicationService(new SyndicationServiceImpl(), 10));
+
+        ServiceManager manager = new ServiceManager(services);
+        manager.addListener(new ServiceManager.Listener() {
+            @Override
+            public void healthy() {
+                LOG.info("All services started & healthy");
+            }
+
+            @Override
+            public void stopped() {
+                LOG.info("All services stopped");
+            }
+
+            @Override
+            public void failure(final Service service) {
+                LOG.info("Service {} failed", service);
+            }
+        });
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                services.forEach(Service::stop);
+                try {
+                    manager.stopAsync().awaitStopped(5, TimeUnit.SECONDS);
+                }
+                catch (TimeoutException timeout) {
+                    LOG.error("Stopping services timed out");
+                }
             }
         });
 
-        CountDownLatch serviceLatch = new CountDownLatch(services.size());
-
-        for (AbstractCoreService service : services) {
-            service.addListener(new ServiceListener(serviceLatch, service.getServiceName()), MoreExecutors.sameThreadExecutor());
-            service.start();
-        }
-
-        while (serviceLatch.getCount() > 0) {
-            try {
-                serviceLatch.await();
-            }
-            catch (InterruptedException e) {
-                LOG.info("Await interrupted, retrying");
-            }
-        }
-    }
-
-    private static class ServiceListener implements Service.Listener {
-
-        private final CountDownLatch serviceLatch;
-        private final String serviceName;
-
-        ServiceListener(final CountDownLatch serviceLatch, final String serviceName) {
-            this.serviceLatch = serviceLatch;
-            this.serviceName = serviceName;
-        }
-
-        @Override
-        public void starting() {
-            LOG.info("Service {} starting", serviceName);
-        }
-
-        @Override
-        public void running() {
-            LOG.info("Service {} running", serviceName);
-        }
-
-        @Override
-        public void stopping(final Service.State from) {
-            LOG.info("Service {} stopping", serviceName);
-        }
-
-        @Override
-        public void terminated(final Service.State from) {
-            serviceLatch.countDown();
-            LOG.info("Service {} stopped, latch counted down: {}", serviceName, serviceLatch.getCount());
-        }
-
-        @Override
-        public void failed(final Service.State from, final Throwable failure) {
-            serviceLatch.countDown();
-            LOG.info("Service {} failed, latch counted down: {}", serviceName, serviceLatch.getCount());
-        }
+        manager.startAsync().awaitHealthy();
+        // TODO check from time to time if all is still ok
+        manager.awaitStopped();
     }
 }

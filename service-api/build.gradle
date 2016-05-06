@@ -8,6 +8,16 @@ buildscript {
 }
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
+apply plugin: 'application'
+
+mainClassName = 'com.korwe.thecore.service.CoreServices'
+
+dependencies {
+    runtime project(':service-api')
+    runtime project(':common-api')
+    runtime 'postgresql:postgresql:8.4-702.jdbc4'
+    runtime 'org.slf4j:slf4j-log4j12:1.6.1'
+}
 
 dependencies {
     compile project(':common-api')

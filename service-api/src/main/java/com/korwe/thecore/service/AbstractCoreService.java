@@ -179,4 +179,9 @@ public abstract class AbstractCoreService extends AbstractIdleService implements
     }
 
     protected abstract void handlePingRequest(ServiceRequest request);
+
+    @Override
+    protected String serviceName() {
+        return getServiceName();
+    }
 }

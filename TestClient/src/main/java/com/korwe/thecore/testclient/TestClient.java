@@ -4,6 +4,7 @@ package com.korwe.thecore.testclient;
 import com.korwe.thecore.api.*;
 
 import com.korwe.thecore.messages.*;
+import com.rabbitmq.client.ConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.thoughtworks.xstream.XStream;
@@ -23,14 +24,15 @@ public class TestClient implements CoreMessageHandler {
     private CoreSubscriber dataSubscriber;
     private CoreMessageSerializer serializer = new CoreMessageXmlSerializer();
     private XStream xstream = new XStream();
+    CoreFactory coreFactory = new CoreFactoryImpl(new ConnectionFactory(), serializer);
 
     private static final String MSG_FILE = "/msg.0.xml";
 
     private void connect() {
-        sender = new CoreSender(MessageQueue.ClientToCore);
-        subscriber = new CoreSubscriber(MessageQueue.CoreToClient, SESSION_ID);
+        sender = coreFactory.createSender(MessageQueue.ClientToCore, SESSION_ID);
+        subscriber = coreFactory.createSubscriber(MessageQueue.CoreToClient, SESSION_ID);
         subscriber.connect(this);
-        dataSubscriber = new CoreSubscriber(MessageQueue.Data, SESSION_ID);
+        dataSubscriber = coreFactory.createSubscriber(MessageQueue.Data, SESSION_ID);
         dataSubscriber.connect(this);
     }
 

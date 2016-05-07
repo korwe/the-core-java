@@ -5,7 +5,7 @@
   <guid>b18ecace-8cb5-4625-89b6-6de6b7f6e977</guid>
   <choreography>SyndicationService</choreography>
   <description>Test message</description>
-  <timeStamp>20130409T143312.123</timeStamp>
+  <timeStamp>20160507T143312.123</timeStamp>
   <function>fetchLatest</function>
   <parameters>
     <parameter>

@@ -1,7 +1,10 @@
 package com.korwe.thecore.testclient;
 
+import com.korwe.thecore.api.CoreFactoryImpl;
 import com.korwe.thecore.client.*;
+import com.korwe.thecore.messages.CoreMessageXmlSerializer;
 import com.korwe.thecore.messages.ServiceRequest;
+import com.rabbitmq.client.ConnectionFactory;
 import com.thoughtworks.xstream.XStream;
 
 import java.util.Map;
@@ -20,9 +23,10 @@ public class TestAsyncClient {
 
     private CoreClient client;
 
+
     public TestAsyncClient() {
         xStream = new XStream();
-        client = new CoreClient(CLIENT_ID, new XStreamSerializationStrategy(xStream));
+        client = new CoreClient(CLIENT_ID, new XStreamSerializationStrategy(xStream), new CoreFactoryImpl(new ConnectionFactory(), new CoreMessageXmlSerializer()));
     }
 
     private ClientServiceRequest createRequest(String url, int maxEntries) {

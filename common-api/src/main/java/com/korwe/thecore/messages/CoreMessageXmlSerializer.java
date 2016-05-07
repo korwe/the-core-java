@@ -298,7 +298,7 @@ public class CoreMessageXmlSerializer implements CoreMessageSerializer {
         NodeList nodes = doc.getElementsByTagName(tagName);
         if (0 == nodes.getLength() || !tagName.equals(nodes.item(0).getNodeName()) ||
             null == nodes.item(0).getTextContent() || nodes.item(0).getTextContent().isEmpty()) {
-            LOG.warn("Message has no " + tagName);
+            LOG.debug("Message has no " + tagName);
             return "";
         }
         return nodes.item(0).getTextContent();

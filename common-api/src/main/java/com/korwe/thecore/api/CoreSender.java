@@ -19,13 +19,18 @@
 
 package com.korwe.thecore.api;
 
+import com.google.common.collect.ImmutableMap;
+import com.korwe.thecore.exception.CoreSystemException;
 import com.korwe.thecore.messages.CoreMessage;
 import com.korwe.thecore.messages.CoreMessageSerializer;
-import com.korwe.thecore.messages.CoreMessageXmlSerializer;
-import org.apache.qpid.transport.*;
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,39 +44,37 @@ public class CoreSender {
     private final MessageQueue queue;
     private Connection connection;
     private CoreMessageSerializer serializer;
-    private final Session session;
+    private Channel channel = null;
 
-    public CoreSender(MessageQueue queue) {
+     CoreSender(Connection connection, MessageQueue queue, CoreMessageSerializer serializer) {
+        this.serializer = serializer;
         this.queue = queue;
-        connection = new Connection();
-        CoreConfig config = CoreConfig.getInstance();
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Connecting to queue server " + config.getProperty("amqp_server"));
-        }
-        connection.connect(config.getProperty("amqp_server"), config.getIntProperty("amqp_port"),
-                           config.getProperty("amqp_vhost"), config.getProperty("amqp_user"),
-                           config.getProperty("amqp_password"));
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Connected");
-        }
+        this.connection = connection;
 
-        session = connection.createSession();
-        serializer = new CoreMessageXmlSerializer();
+        try {
+            channel = connection.createChannel();
+        }
+        catch (IOException e) {
+            LOG.error("Unable to create channel", e);
+            throw new CoreSystemException(e, "system.unexpected");
+        }
     }
 
     public void close() {
-        session.sync();
-        session.close();
-        connection.close();
+        try {
+            channel.close();
+        }
+        catch (Exception e) {
+            LOG.warn("Channel closing failed", e);
+            throw new CoreSystemException(e, "system.unexpected");
+        }
     }
 
     public void sendMessage(CoreMessage message) {
         if (queue.isDirect()) {
             String destination = MessageQueue.DIRECT_EXCHANGE;
             String routing = queue.getQueueName();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Sending to " + routing);
-            }
+            LOG.debug("Sending to " + routing);
 
             send(message, destination, routing);
         }
@@ -84,33 +87,30 @@ public class CoreSender {
         if (queue.isTopic()) {
             String destination = MessageQueue.TOPIC_EXCHANGE;
             String routing = queue.getQueueName() + "." + recipient;
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Sending to " + routing);
-            }
+            LOG.debug("Sending to " + routing);
 
             send(message, destination, routing);
         }
         else {
-            LOG.error("Cannot send to explicitly addressed message direct point to point queue");
+            LOG.error("Cannot send explicitly addressed message to direct point to point queue");
         }
 
     }
 
     private void send(CoreMessage message, String destination, String routing) {
         String serialized = serializer.serialize(message);
-        DeliveryProperties props = new DeliveryProperties();
-        props.setRoutingKey(routing);
-        MessageProperties msgProps = new MessageProperties();
-        Map<String, Object> appHeaders = new HashMap<String, Object>();
-        appHeaders.put("sessionId", message.getSessionId());
-        appHeaders.put("choreography", message.getChoreography());
-        appHeaders.put("guid", message.getGuid());
-        appHeaders.put("messageType", message.getMessageType().name());
-        msgProps.setApplicationHeaders(appHeaders);
-        session.messageTransfer(destination, MessageAcceptMode.EXPLICIT, MessageAcquireMode.PRE_ACQUIRED,
-                                new Header(props, msgProps), serialized);
-        if (LOG.isDebugEnabled()) {
+        Map<String, Object> appHeaders = ImmutableMap.of("sessionId", message.getSessionId(),
+                                                         "choreography", message.getChoreography(),
+                                                         "guid", message.getGuid(),
+                                                         "messageType", message.getMessageType().name());
+        AMQP.BasicProperties msgProps = new AMQP.BasicProperties.Builder().headers(appHeaders).build();
+        try {
+            channel.basicPublish(destination, routing, msgProps, serialized.getBytes());
             LOG.debug("Sent: " + serialized);
+        }
+        catch (IOException e) {
+            LOG.error("Unable to send message", e);
+            throw new CoreSystemException(e, "system.unexpected");
         }
     }
 

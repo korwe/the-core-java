@@ -19,10 +19,14 @@
 
 package com.korwe.thecore.api;
 
-import org.apache.qpid.transport.Option;
-import org.apache.qpid.transport.Session;
+import com.korwe.thecore.exception.CoreSystemException;
+import com.korwe.thecore.messages.CoreMessageSerializer;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
@@ -33,20 +37,24 @@ public class CoreSubscriber extends CoreReceiver {
 
     private final String filter;
 
-    public CoreSubscriber(MessageQueue queue, String filter) {
+    CoreSubscriber(Connection connection, MessageQueue queue, String filter, CoreMessageSerializer serializer) {
+        super(connection, serializer);
         this.filter = filter;
         this.queueName = getQueueName(queue);
     }
 
     @Override
-    protected void bindToQueue(String queueName, Session session) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Binding to topic " + queueName);
-        }
+    protected void bindToQueue(String queueName, Channel channel) {
+        LOG.debug("Binding to topic " + queueName);
 
-        session.queueDeclare(queueName, null, null, Option.AUTO_DELETE);
-        session.exchangeBind(queueName, MessageQueue.TOPIC_EXCHANGE, queueName, null);
-        super.bindToQueue(queueName, session);
+        try {
+            channel.queueDeclare(queueName, false, false, true, null);
+            channel.queueBind(queueName, MessageQueue.TOPIC_EXCHANGE, queueName);
+        }
+        catch (IOException e) {
+            LOG.error("Unable to bind to topic", e);
+            throw new CoreSystemException(e, "system.unexpected");
+        }
     }
 
     @Override

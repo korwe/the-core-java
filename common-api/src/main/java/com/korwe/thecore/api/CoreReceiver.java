@@ -19,110 +19,97 @@
 
 package com.korwe.thecore.api;
 
+import com.korwe.thecore.exception.CoreSystemException;
 import com.korwe.thecore.messages.CoreMessage;
 import com.korwe.thecore.messages.CoreMessageSerializer;
-import com.korwe.thecore.messages.CoreMessageXmlSerializer;
 
-import org.apache.qpid.transport.*;
+import com.rabbitmq.client.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.*;
 
 /**
  * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
-public class CoreReceiver implements SessionListener {
+public class CoreReceiver {
 
     private static final Logger LOG = LoggerFactory.getLogger(CoreReceiver.class);
 
     private Connection connection;
     private CoreMessageSerializer serializer;
-    private Session session;
+    private Channel channel;
     private CoreMessageHandler handler;
     protected String queueName;
 
-    protected CoreReceiver(){
-        serializer = new CoreMessageXmlSerializer();
+    CoreReceiver(Connection connection, CoreMessageSerializer serializer){
+        this.connection = connection;
+        this.serializer = serializer;
     }
 
-    protected CoreReceiver(String queueName){
+    CoreReceiver(Connection connection, String queueName, CoreMessageSerializer serializer){
+        this.connection = connection;
         this.queueName = queueName;
-        serializer = new CoreMessageXmlSerializer();
+        this.serializer = serializer;
     }
 
-    public CoreReceiver(MessageQueue queue) {
+    CoreReceiver(Connection connection, MessageQueue queue, CoreMessageSerializer serializer) {
+        this.connection = connection;
+        this.serializer = serializer;
         queueName = getQueueName(queue);
-        serializer = new CoreMessageXmlSerializer();
     }
 
     public void connect(CoreMessageHandler handler) {
         this.handler = handler;
-        connection = new Connection();
-        CoreConfig config = CoreConfig.getInstance();
-        connection.connect(config.getProperty("amqp_server"), config.getIntProperty("amqp_port"),
-                           config.getProperty("amqp_vhost"), config.getProperty("amqp_user"),
-                           config.getProperty("amqp_password"));
-        session = connection.createSession();
-        session.setSessionListener(this);
-        bindToQueue(queueName, session);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Connected and waiting for messages");
+        try {
+            channel = connection.createChannel();
+            bindToQueue(queueName, channel);
+            channel.basicConsume(queueName, new DefaultConsumer(channel) {
+                @Override
+                public void handleDelivery(final String consumerTag, final Envelope envelope,
+                                           final AMQP.BasicProperties properties, final byte[] body)
+                        throws IOException {
+                    String msgText = body == null || body.length == 0 ? null : new String(body);
+                    LOG.debug("Received: " + msgText);
+                    if (msgText != null) {
+                        CoreMessage message = serializer.deserialize(msgText);
+                        handler.handleMessage(message);
+                    }
+                }
+            });
         }
+        catch (IOException e) {
+            LOG.error("Unable to create channel", e);
+            throw new CoreSystemException(e, "system.unexpected");
+
+        }
+
+        LOG.debug("Connected and waiting for messages");
 
     }
 
     public void close() {
-        session.messageCancel(queueName);
-        session.close();
-        connection.close();
+        try {
+            channel.close();
+        }
+        catch (Exception e) {
+            LOG.warn("Channel closing failed", e);
+            throw new CoreSystemException(e, "system.unexpected");
+        }
     }
 
-    protected void bindToQueue(String queueName, Session session) {
-        session.messageSubscribe(queueName, queueName, MessageAcceptMode.NONE, MessageAcquireMode.PRE_ACQUIRED, null, 0,
-                                 null);
-        session.messageFlow(queueName, MessageCreditUnit.BYTE, Session.UNLIMITED_CREDIT);
-        session.messageFlow(queueName, MessageCreditUnit.MESSAGE, Session.UNLIMITED_CREDIT);
-        session.sync();
+    protected void bindToQueue(String queueName, Channel channel) {
+        try {
+            channel.queueDeclarePassive(queueName);
+            channel.queueBind(queueName, MessageQueue.DIRECT_EXCHANGE, queueName);
+        }
+        catch (IOException e) {
+            LOG.error("Unable to connect to queue", e);
+        }
     }
 
     protected String getQueueName(MessageQueue queue) {
         return queue.getQueueName();
     }
 
-    @Override
-    public void closed(Session session) {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Session listener closed");
-        }
-    }
-
-    @Override
-    public void opened(Session session) {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Session listener opened");
-        }
-
-    }
-
-    @Override
-    public void resumed(Session session) {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Session listener resumed");
-        }
-
-    }
-
-    @Override
-    public void message(Session session, MessageTransfer messageTransfer) {
-        String msgText = messageTransfer.getBodyString();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Received: " + msgText);
-        }
-        CoreMessage message = serializer.deserialize(msgText);
-        handler.handleMessage(message);
-    }
-
-    @Override
-    public void exception(Session session, SessionException e) {
-        LOG.error("Error receiving message from queue", e);
-    }
 }

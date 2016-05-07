@@ -19,6 +19,7 @@
 
 package com.korwe.thecore.service.syndication;
 
+import com.korwe.thecore.api.CoreFactory;
 import com.korwe.thecore.service.GenericCoreService;
 import com.korwe.thecore.service.SyndicationService;
 
@@ -26,7 +27,7 @@ import com.korwe.thecore.service.SyndicationService;
  * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 public class CoreSyndicationService extends GenericCoreService<SyndicationService> {
-    public CoreSyndicationService(SyndicationService syndicationService, int maxThreads){
-        super(syndicationService, syndicationService.serviceName, maxThreads);
+    public CoreSyndicationService(SyndicationService syndicationService, int maxThreads, CoreFactory coreFactory){
+        super(syndicationService, syndicationService.serviceName, maxThreads, coreFactory);
     }
 }

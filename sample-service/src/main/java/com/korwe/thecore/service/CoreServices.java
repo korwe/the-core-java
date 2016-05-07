@@ -22,9 +22,13 @@ package com.korwe.thecore.service;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.Service;
 import com.google.common.util.concurrent.ServiceManager;
+import com.korwe.thecore.api.CoreFactory;
+import com.korwe.thecore.api.CoreFactoryImpl;
+import com.korwe.thecore.messages.CoreMessageXmlSerializer;
 import com.korwe.thecore.service.ping.CorePingService;
 import com.korwe.thecore.service.syndication.CoreSyndicationService;
 import com.korwe.thecore.service.syndication.SyndicationServiceImpl;
+import com.rabbitmq.client.ConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,8 +48,10 @@ public class CoreServices {
     private static Set<AbstractCoreService> services = new HashSet<>(5);
 
     public static void main(String[] args) {
-        services.add(new CorePingService(10));
-        services.add(new CoreSyndicationService(new SyndicationServiceImpl(), 10));
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+        CoreFactory coreFactory = new CoreFactoryImpl(connectionFactory, new CoreMessageXmlSerializer());
+        services.add(new CorePingService(10,coreFactory));
+        services.add(new CoreSyndicationService(new SyndicationServiceImpl(), 10, coreFactory));
 
         ServiceManager manager = new ServiceManager(services);
         manager.addListener(new ServiceManager.Listener() {

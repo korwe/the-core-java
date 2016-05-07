@@ -20,11 +20,21 @@
     </camel:contextScan>
   </camel:camelContext>
 
+<!--
   <bean id="amqp" class="org.apache.camel.component.amqp.AMQPComponent">
     <property name="connectionFactory">
       <bean class="org.apache.qpid.client.AMQConnectionFactory">
         <constructor-arg name="url" value="amqp://${amqp.user}:${amqp.pass}@${amqp.vhost}?brokerlist='tcp://${amqp.host}:${amqp.port}'"/>
       </bean>
     </property>
+  </bean>
+-->
+
+  <bean id="rabbitConnectionFactory" class="com.rabbitmq.client.ConnectionFactory">
+    <property name="host" value="${amqp.host}"/>
+    <property name="port" value="${amqp.port}"/>
+    <property name="username" value="${amqp.user}"/>
+    <property name="password" value="${amqp.pass}"/>
+    <property name="virtualHost" value="${amqp.vhost}"/>
   </bean>
 </beans>

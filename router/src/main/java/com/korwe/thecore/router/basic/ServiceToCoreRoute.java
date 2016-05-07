@@ -2,7 +2,9 @@ package com.korwe.thecore.router.basic;
 
 import com.korwe.thecore.api.MessageQueue;
 import com.korwe.thecore.router.AmqpUriPart;
+import org.apache.camel.component.rabbitmq.RabbitMQConstants;
 import org.apache.camel.spring.SpringRouteBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,16 +13,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class ServiceToCoreRoute extends SpringRouteBuilder {
 
+    @Value("${amqp.host}")
+    private String hostname;
+
+    @Value("${amqp.port}")
+    private String port;
+
     @Override
     public void configure() throws Exception {
-        from(String.format("%s%s//%s?%s", AmqpUriPart.DirectPrefix.getValue(), MessageQueue.DIRECT_EXCHANGE,
+        from(String.format("rabbitmq://%s:%s/%s?exchangeType=direct&declare=false&queue=%s&%s", hostname, port, MessageQueue.DIRECT_EXCHANGE,
                            MessageQueue.ServiceToCore.getQueueName(), AmqpUriPart.Options.getValue()))
-                .recipientList(simple(String.format("%s%s/%s.${in.header.sessionId}//?%s,%s%s//%s?%s",
-                                                    AmqpUriPart.TopicPrefix.getValue(),
-                                                    MessageQueue.TOPIC_EXCHANGE,
-                                                    MessageQueue.CoreToClient.getQueueName(),
+                .setHeader(RabbitMQConstants.ROUTING_KEY).simple(String.format("%s.${in.header.sessionId}", MessageQueue.CoreToClient.getQueueName()))
+                .removeHeader(RabbitMQConstants.EXCHANGE_NAME)
+                .recipientList(simple(String.format("rabbitmq://%s:%s/%s?exchangeType=topic&declare=false&%s,rabbitmq://%s:%s/%s?exchangeType=direct&declare=false&queue=%s&%s",
+                                                    hostname, port, MessageQueue.TOPIC_EXCHANGE,
                                                     AmqpUriPart.Options.getValue(),
-                                                    AmqpUriPart.DirectPrefix.getValue(),
+                                                    hostname, port,
                                                     MessageQueue.DIRECT_EXCHANGE,
                                                     MessageQueue.Trace.getQueueName(),
                                                     AmqpUriPart.Options.getValue())));

@@ -4,9 +4,7 @@ package com.korwe.thecore.router;
  * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 public enum AmqpUriPart {
-    DirectPrefix("amqp:queue:BURL:direct://"),
-    TopicPrefix("amqp:topic:BURL:topic://"),
-    Options("exchangePattern=InOnly&disableReplyTo=true");
+    Options("exchangePattern=InOnly");
 
     private final String value;
 

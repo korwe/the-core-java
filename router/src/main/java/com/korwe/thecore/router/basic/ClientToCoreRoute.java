@@ -6,7 +6,9 @@ import com.korwe.thecore.router.AmqpUriPart;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.component.rabbitmq.RabbitMQConstants;
 import org.apache.camel.spring.SpringRouteBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,17 +17,24 @@ import org.springframework.stereotype.Component;
 @Component
 public class ClientToCoreRoute extends SpringRouteBuilder {
 
+    @Value("${amqp.host}")
+    private String hostname;
+
+    @Value("${amqp.port}")
+    private String port;
+
     @Override
     public void configure() throws Exception {
-        from(String.format("%s%s//%s?%s", AmqpUriPart.DirectPrefix.getValue(), MessageQueue.DIRECT_EXCHANGE,
+        from(String.format("rabbitmq://%s:%s/%s?exchangeType=direct&declare=false&queue=%s&%s", hostname, port, MessageQueue.DIRECT_EXCHANGE,
                            MessageQueue.ClientToCore.getQueueName(), AmqpUriPart.Options.getValue()))
             .choice()
                 .when(header("messageType").isEqualTo(CoreMessage.MessageType.ServiceRequest.name()))
-                    .recipientList(simple(String.format("%s%s/%s.${in.header.choreography}//?%s,%s%s//%s?%s",
-                                                        AmqpUriPart.TopicPrefix.getValue(), MessageQueue.TOPIC_EXCHANGE,
-                                                        MessageQueue.CoreToService.getQueueName(),
+                    .setHeader(RabbitMQConstants.ROUTING_KEY).simple(String.format("%s.${in.header.choreography}", MessageQueue.CoreToService.getQueueName()))
+                    .removeHeader(RabbitMQConstants.EXCHANGE_NAME)
+                    .recipientList(simple(String.format("rabbitmq://%s:%s/%s?exchangeType=topic&declare=false&%s,rabbitmq://%s:%s/%s?exchangeType=direct&declare=false&queue=%s&%s",
+                                                        hostname, port, MessageQueue.TOPIC_EXCHANGE,
                                                         AmqpUriPart.Options.getValue(),
-                                                        AmqpUriPart.DirectPrefix.getValue(),
+                                                        hostname, port,
                                                         MessageQueue.DIRECT_EXCHANGE,
                                                         MessageQueue.Trace.getQueueName(),
                                                         AmqpUriPart.Options.getValue()))).end()
@@ -36,10 +45,11 @@ public class ClientToCoreRoute extends SpringRouteBuilder {
                             return new InitiateSessionResponse(sessionId, guid, true);
                         }
                     })
-                        .recipientList(simple(String.format("%s%s/%s.${in.header.sessionId}//?%s",
-                                                            AmqpUriPart.TopicPrefix.getValue(),
+                        .setHeader(RabbitMQConstants.ROUTING_KEY).simple(String.format("%s.${in.header.sessionId}", MessageQueue.CoreToClient.getQueueName()))
+                        .removeHeader(RabbitMQConstants.EXCHANGE_NAME)
+                        .recipientList(simple(String.format("rabbitmq://%s:%s/%s?exchangeType=topic&declare=false&%s",
+                                                            hostname, port,
                                                             MessageQueue.TOPIC_EXCHANGE,
-                                                            MessageQueue.CoreToClient.getQueueName(),
                                                             AmqpUriPart.Options.getValue()))).end()
                 .when(header("messageType").isEqualTo(CoreMessage.MessageType.KillSessionRequest.name()))
                     .process(new SessionResponseProcessor() {
@@ -48,10 +58,11 @@ public class ClientToCoreRoute extends SpringRouteBuilder {
                             return new KillSessionResponse(sessionId, guid, true);
                         }
                     })
-                        .recipientList(simple(String.format("%s%s/%s.${in.header.sessionId}//?%s",
-                                                            AmqpUriPart.TopicPrefix.getValue(),
+                        .setHeader(RabbitMQConstants.ROUTING_KEY).simple(String.format("%s.${in.header.sessionId}", MessageQueue.CoreToClient.getQueueName()))
+                        .removeHeader(RabbitMQConstants.EXCHANGE_NAME)
+                        .recipientList(simple(String.format("rabbitmq://%s:%s/%s?exchangeType=topic&declare=false&%s",
+                                                            hostname, port,
                                                             MessageQueue.TOPIC_EXCHANGE,
-                                                            MessageQueue.CoreToClient.getQueueName(),
                                                             AmqpUriPart.Options.getValue()))).end();
 
     }

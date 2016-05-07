@@ -35,21 +35,21 @@ public class CorePingService extends AbstractCoreService implements CoreMessageH
 
     private PingService pingService;
 
-    public CorePingService(int maxThreads) {
-        super(maxThreads);
+    public CorePingService(int maxThreads, CoreFactory coreFactory) {
+        super(maxThreads, coreFactory);
     }
 
-    public CorePingService(int maxThreads, XStream xStream) {
-        super(maxThreads, xStream);
+    public CorePingService(int maxThreads, XStream xStream, CoreFactory coreFactory) {
+        super(maxThreads, xStream, coreFactory);
     }
 
-    public CorePingService(PingService pingService, int maxThreads){
-        super(maxThreads);
+    public CorePingService(PingService pingService, int maxThreads, CoreFactory coreFactory){
+        super(maxThreads, coreFactory);
         this.pingService = pingService;
     }
 
-    public CorePingService(PingService pingService, int maxThreads, XStream xStream){
-        super(maxThreads, xStream);
+    public CorePingService(PingService pingService, int maxThreads, XStream xStream, CoreFactory coreFactory){
+        super(maxThreads, xStream, coreFactory);
         this.pingService = pingService;
     }
 

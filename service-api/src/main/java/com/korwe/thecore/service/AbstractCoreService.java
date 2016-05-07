@@ -3,10 +3,7 @@ package com.korwe.thecore.service;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AbstractIdleService;
-import com.korwe.thecore.api.CoreMessageHandler;
-import com.korwe.thecore.api.CoreSender;
-import com.korwe.thecore.api.CoreSubscriber;
-import com.korwe.thecore.api.MessageQueue;
+import com.korwe.thecore.api.*;
 import com.korwe.thecore.exception.CoreException;
 import com.korwe.thecore.exception.ErrorType;
 import com.korwe.thecore.messages.CoreMessage;
@@ -40,33 +37,32 @@ public abstract class AbstractCoreService extends AbstractIdleService implements
     private XStream xStream;
     private ExecutorService executorService;
     private int maxThreads = 10;
+    private CoreFactory coreFactory;
 
-    protected AbstractCoreService(int maxThreads) {
-        this(maxThreads, null);
+    protected AbstractCoreService(int maxThreads, CoreFactory coreFactory) {
+        this(maxThreads, null, coreFactory);
     }
 
-    protected AbstractCoreService(int maxThreads, XStream xStream) {
+    protected AbstractCoreService(int maxThreads, XStream xStream, CoreFactory coreFactory) {
+        this.coreFactory = coreFactory;
         if (maxThreads > 0) this.maxThreads = maxThreads;
         this.xStream = xStream == null ? new XStream() : xStream;
     }
 
     @Override
     public void handleMessage(final CoreMessage message) {
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                ServiceRequest request = toServiceRequest(message);
-                if (null == request) {
-                    handleBadMessageType(message);
-                }
-                else if (!getServiceName().equals(message.getChoreography())) {
-                    handleBadRequest(request);
-                }
-                else {
-                    handleServiceRequest(request);
-                }
-
+        executorService.execute(() -> {
+            ServiceRequest request = toServiceRequest(message);
+            if (null == request) {
+                handleBadMessageType(message);
             }
+            else if (!getServiceName().equals(message.getChoreography())) {
+                handleBadRequest(request);
+            }
+            else {
+                handleServiceRequest(request);
+            }
+
         });
     }
 
@@ -148,9 +144,9 @@ public abstract class AbstractCoreService extends AbstractIdleService implements
     protected void startUp() throws Exception {
         LOG.info("Starting "+getServiceName());
         executorService = Executors.newFixedThreadPool(maxThreads);
-        responseSender = new CoreSender(MessageQueue.ServiceToCore);
-        dataSender = new CoreSender(MessageQueue.Data);
-        requestSubscriber = new CoreSubscriber(MessageQueue.CoreToService, getServiceName());
+        responseSender = coreFactory.createSender(MessageQueue.ServiceToCore, getServiceName());
+        dataSender = coreFactory.createSender(MessageQueue.Data, getServiceName());
+        requestSubscriber = coreFactory.createSubscriber(MessageQueue.CoreToService, getServiceName());
         requestSubscriber.connect(this);
     }
 

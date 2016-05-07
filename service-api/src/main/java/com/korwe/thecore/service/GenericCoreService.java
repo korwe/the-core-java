@@ -2,6 +2,7 @@ package com.korwe.thecore.service;
 
 import com.google.common.collect.ImmutableMap;
 import com.korwe.thecore.annotation.ParamNames;
+import com.korwe.thecore.api.CoreFactory;
 import com.korwe.thecore.exception.CoreException;
 import com.korwe.thecore.exception.CoreSystemException;
 import com.korwe.thecore.messages.ServiceRequest;
@@ -30,13 +31,13 @@ public class GenericCoreService<S> extends CorePingService {
 
 
     @SuppressWarnings("unchecked")
-    public GenericCoreService(S delegate, String serviceName, int maxThreads) {
-        this(delegate, serviceName, maxThreads, null);
+    public GenericCoreService(S delegate, String serviceName, int maxThreads, CoreFactory coreFactory) {
+        this(delegate, serviceName, maxThreads, null, coreFactory);
     }
 
     @SuppressWarnings("unchecked")
-    public GenericCoreService(S delegate, String serviceName, int maxThreads, XStream xStream) {
-        super(maxThreads, xStream);
+    public GenericCoreService(S delegate, String serviceName, int maxThreads, XStream xStream, CoreFactory coreFactory) {
+        super(maxThreads, xStream, coreFactory);
         this.delegate = delegate;
         this.serviceName = serviceName;
         this.serviceClass = (Class<S>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];

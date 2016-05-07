@@ -1,7 +1,9 @@
 package com.korwe.thecore.client;
 
+import com.korwe.thecore.api.CoreFactory;
 import com.korwe.thecore.api.CoreMessageHandler;
 import com.korwe.thecore.api.CoreSubscriber;
+import com.korwe.thecore.api.MessageQueue;
 import com.korwe.thecore.messages.CoreMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,12 +18,14 @@ public abstract class ResponseHandler implements CoreMessageHandler {
     protected MessageResponseRegistry messageResponseRegistry;
     protected String clientId;
     protected CoreSubscriber coreSubscriber;
+    protected CoreFactory coreFactory;
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    protected ResponseHandler(String clientId, MessageResponseRegistry messageResponseRegistry) {
+    protected ResponseHandler(String clientId, MessageResponseRegistry messageResponseRegistry, CoreFactory coreFactory) {
         this.clientId = clientId;
         this.messageResponseRegistry = messageResponseRegistry;
+        this.coreFactory = coreFactory;
     }
 
     protected abstract void handleResponse(CoreMessage message);
@@ -34,4 +38,10 @@ public abstract class ResponseHandler implements CoreMessageHandler {
             handleResponse(message);
         }
     }
+
+    public void close() {
+        coreSubscriber.close();
+    }
+
+    protected abstract MessageQueue getMessageQueue();
 }

@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
-public class XStreamSerializationStrategy implements SerializationStrategy {
+public class XStreamSerializationStrategy implements ParamSerializationStrategy {
 
     private XStream xStream;
     private Logger log = LoggerFactory.getLogger(XStreamSerializationStrategy.class);

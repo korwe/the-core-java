@@ -1,10 +1,10 @@
 package com.korwe.thecore.client;
 
+import com.korwe.thecore.api.CoreFactory;
 import com.korwe.thecore.api.CoreSubscriber;
 import com.korwe.thecore.api.MessageQueue;
 import com.korwe.thecore.messages.CoreMessage;
 import com.korwe.thecore.messages.DataResponse;
-import com.thoughtworks.xstream.XStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,15 +12,17 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:nithia.govender@korwe.com">Nithia Govender</a>
  */
 public class DataResponseHandler extends ResponseHandler {
-    private final SerializationStrategy serializationStrategy;
+    private static final MessageQueue MESSAGE_QUEUE = MessageQueue.Data;
+
+    private final ParamSerializationStrategy paramSerializationStrategy;
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     protected DataResponseHandler(String clientId, MessageResponseRegistry messageResponseRegistry,
-                                  SerializationStrategy serializationStrategy) {
+                                  ParamSerializationStrategy paramSerializationStrategy, CoreFactory coreFactory) {
 
-        super(clientId, messageResponseRegistry);
-        this.serializationStrategy = serializationStrategy;
-        coreSubscriber = new CoreSubscriber(MessageQueue.Data, clientId);
+        super(clientId, messageResponseRegistry, coreFactory);
+        this.paramSerializationStrategy = paramSerializationStrategy;
+        coreSubscriber = coreFactory.createSubscriber(MESSAGE_QUEUE, clientId);
         coreSubscriber.connect(this);
     }
 
@@ -28,7 +30,12 @@ public class DataResponseHandler extends ResponseHandler {
     protected void handleResponse(CoreMessage message) {
         log.debug("Handling data response: {}", message.getGuid());
         DataResponse dataResponse = (DataResponse) message;
-        Object data = dataResponse.getData() == null ? null : serializationStrategy.deserialize(dataResponse.getData());
+        Object data = dataResponse.getData() == null ? null : paramSerializationStrategy.deserialize(dataResponse.getData());
         messageResponseRegistry.registerDataResponse(dataResponse, data);
+    }
+
+    @Override
+    protected MessageQueue getMessageQueue() {
+        return MESSAGE_QUEUE;
     }
 }

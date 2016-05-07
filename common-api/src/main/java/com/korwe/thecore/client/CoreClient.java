@@ -3,6 +3,7 @@ package com.korwe.thecore.client;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.korwe.thecore.api.CoreFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,7 @@ public class CoreClient {
     private RequestProcessor requestProcessor;
     private ServiceResponseHandler serviceResponseHandler;
     private DataResponseHandler dataResponseHandler;
+    private CoreFactory coreFactory;
 
     private MessageResponseRegistry messageResponseRegistry;
 
@@ -26,13 +28,15 @@ public class CoreClient {
 
     private ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
 
-    public CoreClient(String clientId, SerializationStrategy serializationStrategy) {
-  //      CoreConfig.setConfigFilePath(".");
+    public CoreClient(String clientId, ParamSerializationStrategy paramSerializationStrategy,
+                      final CoreFactory coreFactory) {
         this.clientId = clientId;
+        this.coreFactory = coreFactory;
         messageResponseRegistry = new MessageResponseRegistry();
-        requestProcessor = new RequestProcessor(clientId, serializationStrategy);
-        serviceResponseHandler = new ServiceResponseHandler(clientId, messageResponseRegistry);
-        dataResponseHandler = new DataResponseHandler(clientId, messageResponseRegistry, serializationStrategy);
+        requestProcessor = new RequestProcessor(this.clientId, paramSerializationStrategy, this.coreFactory);
+        serviceResponseHandler = new ServiceResponseHandler(this.clientId, messageResponseRegistry, this.coreFactory);
+        dataResponseHandler = new DataResponseHandler(this.clientId, messageResponseRegistry, paramSerializationStrategy,
+                                                      this.coreFactory);
     }
 
     public void initSession() {
@@ -63,6 +67,8 @@ public class CoreClient {
 
     public void closeSession() {
         requestProcessor.sendKillSession();
+        serviceResponseHandler.close();
+        dataResponseHandler.close();
     }
 
 }

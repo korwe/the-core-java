@@ -22,7 +22,7 @@ public class MessageResponseRegistry {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public MessageResponseRegistry() {
-        registry = new ConcurrentHashMap<String, MessageResponse>();
+        registry = new ConcurrentHashMap<>();
     }
 
     public boolean expectsResponse(String guid) {

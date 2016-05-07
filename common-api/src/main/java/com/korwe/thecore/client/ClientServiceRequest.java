@@ -66,10 +66,10 @@ public class ClientServiceRequest {
         return serviceRequest.getGuid();
     }
 
-    public ServiceRequest getServiceRequest(String clientId, SerializationStrategy serializationStrategy) {
+    public ServiceRequest getServiceRequest(String clientId, ParamSerializationStrategy paramSerializationStrategy) {
         if (serviceRequest.getSessionId() == null) serviceRequest.setSessionId(clientId);
         for (String name : parameters.keySet()) {
-            serviceRequest.setParameter(name, serializationStrategy.serialize(parameters.get(name)));
+            serviceRequest.setParameter(name, paramSerializationStrategy.serialize(parameters.get(name)));
         }
         return serviceRequest;
     }

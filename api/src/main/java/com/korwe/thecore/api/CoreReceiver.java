@@ -62,6 +62,7 @@ public class CoreReceiver implements SessionListener {
     }
 
     public void close() {
+        LOG.info("Closing receiver session and connection");
         session.messageCancel(queueName);
         session.close();
         connection.close();

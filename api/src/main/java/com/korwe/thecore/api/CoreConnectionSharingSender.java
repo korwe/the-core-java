@@ -22,7 +22,7 @@ public class CoreConnectionSharingSender extends CoreSender {
 
     @Override
     public void close() {
-        LOG.info("Closing session and connection");
+        LOG.info("Closing sender session only");
         session.sync();
         session.close();
     }

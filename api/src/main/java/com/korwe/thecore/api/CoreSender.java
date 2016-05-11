@@ -64,7 +64,7 @@ public class CoreSender {
     }
 
     public void close() {
-        LOG.info("Closing session and connection");
+        LOG.info("Closing sender session and connection");
         session.sync();
         session.close();
         connection.close();

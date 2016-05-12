@@ -3,13 +3,15 @@ package com.korwe.thecore.api;
 import org.apache.qpid.transport.Connection;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author <a href="mailto:dario.matonicki@korwe.com>Dario Matonicki</a>
  */
 public class CoreSenderFactory {
 
-    private HashMap<String, Connection> connections = new HashMap<>();
+    private Map<String, Connection> connections = new ConcurrentHashMap<>();
 
     public  CoreSender createCoreSender(MessageQueue queue,
                                         CoreSenderConnectionType senderConnectionType,
@@ -17,16 +19,17 @@ public class CoreSenderFactory {
 
         CoreSender coreSender = null;
 
-        if (senderConnectionType == CoreSenderConnectionType.NewConnection) {
-            coreSender = new CoreSender(queue);
+        switch (senderConnectionType) {
+            case NewConnection:
+                coreSender = new CoreSender(queue);
 
-        }
-        else if (senderConnectionType == CoreSenderConnectionType.SharedConnection){
+                break;
+            case SharedConnection:
+                Connection connection = getConnection(serviceName);
 
-            Connection connection = getConnection(serviceName);
+                coreSender = new CoreConnectionSharingSender(queue, connection);
 
-            coreSender = new CoreConnectionSharingSender(queue, connection);
-
+                break;
         }
 
         return coreSender;
@@ -40,7 +43,7 @@ public class CoreSenderFactory {
         }
     }
 
-    private Connection getConnection(String serviceName) {
+    private synchronized Connection getConnection(String serviceName) {
 
         Connection connection;
 

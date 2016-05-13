@@ -52,6 +52,7 @@ public class CoreSenderFactory {
         }
         else {
             Connection newConnection = new Connection();
+            newConnection.addConnectionListener(new LoggingConnectionListener());
 
             CoreConfig config = CoreConfig.getConfig();
 

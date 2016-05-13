@@ -48,6 +48,7 @@ public class CoreSender {
     public CoreSender(MessageQueue queue) {
         this.queue = queue;
         connection = new Connection();
+        connection.addConnectionListener(new LoggingConnectionListener());
         CoreConfig config = CoreConfig.getConfig();
         if (LOG.isInfoEnabled()) {
             LOG.info("Connecting to queue server " + config.getSetting("amqp_server"));

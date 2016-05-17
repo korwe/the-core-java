@@ -111,7 +111,7 @@ public class CoreReceiver implements SessionListener {
         }
         else {
             int endIndex = msgText.indexOf("</function");
-            LOG.info("Received: " + msgText.substring(0, endIndex > 0 ? endIndex : 350));
+            LOG.info("Received: " + msgText.substring(0, endIndex > 0 ? endIndex : Math.min(350, msgText.length())));
         }
         CoreMessage message = serializer.deserialize(msgText);
         handler.handleMessage(message);

@@ -6,7 +6,7 @@ allprojects {
     sourceCompatibility = 1.7
 
     group = 'com.korwe'
-    version = '2.0.0-b14-SNAPSHOT'
+    version = '2.0.0-b15-SNAPSHOT'
 
     repositories {
          mavenLocal()

@@ -120,7 +120,7 @@ public class CoreSender {
         }
         else {
             int endIndex = serialized.indexOf("</function");
-            LOG.info("Sent: " + serialized.substring(0, endIndex > 0 ? endIndex : 350));
+            LOG.info("Sent: " + serialized.substring(0, endIndex > 0 ? endIndex : Math.min(350, serialized.length())));
         }
     }
 

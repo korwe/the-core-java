@@ -110,7 +110,7 @@ public class CoreReceiver implements SessionListener {
             LOG.debug("Received: " + msgText);
         }
         else {
-            int endIndex = msgText.indexOf("</choreo");
+            int endIndex = msgText.indexOf("</function");
             LOG.info("Received: " + msgText.substring(0, endIndex > 0 ? endIndex : 350));
         }
         CoreMessage message = serializer.deserialize(msgText);

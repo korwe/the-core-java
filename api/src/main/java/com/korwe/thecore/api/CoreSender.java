@@ -118,6 +118,10 @@ public class CoreSender {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sent: " + serialized);
         }
+        else {
+            int endIndex = serialized.indexOf("</function");
+            LOG.info("Sent: " + serialized.substring(0, endIndex > 0 ? endIndex : 350));
+        }
     }
 
     public MessageQueue getQueue() {

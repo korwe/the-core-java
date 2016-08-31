@@ -15,7 +15,7 @@ public class LoggingConnectionListener implements ConnectionListener {
 
     @Override
     public void opened(final Connection connection) {
-        logger.info("### Connection opened {}", connection.toString());
+        logger.debug("### Connection opened {}", connection.toString());
     }
 
     @Override
@@ -25,6 +25,6 @@ public class LoggingConnectionListener implements ConnectionListener {
 
     @Override
     public void closed(final Connection connection) {
-        logger.warn("### Connection closed {}", connection);
+        logger.debug("### Connection closed {}", connection);
     }
 }
